@@ -1,0 +1,12 @@
+# WARN 1 for questionable file name.
+# Good comment
+# WARN 1 for questionable var assignment.
+BAD=$VAR
+# WARN 1 for questionable user.
+1 * * * * ro0ot Bad User
+# WARN 1 for questionable bare %.
+1 * * * * root Command with %
+# WARN 0 for complicated time interaction (disabled; too many false pos)
+59 23 29 11 4 root Both DOW and DOM specified.
+# WARN 1 for probable missing user.
+@monthly Missing User

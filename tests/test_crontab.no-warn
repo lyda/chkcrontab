@@ -1,0 +1,19 @@
+# WARN 1 for questionable file name.
+# Good comment
+# FAIL 2 for bad chkcrontab command and bad error
+# chkcrontab: ENABLE-MSG=KITTEN
+# disable warn 1 for questionable var assignment.
+# chkcrontab: disable-msg=SHELL_VAR
+BAD=$VAR
+# disable warn 1 for questionable user.
+# chkcrontab: disable-msg=USER_NOT_FOUND
+1 * * * * ro0ot Bad User
+# disable warn 1 for questionable bare %.
+# chkcrontab: disable-msg=BARE_PERCENT
+1 * * * * root Command with % (this will not warn)
+# WARN 1 for questionable bare %.
+# chkcrontab: enable-msg=BARE_PERCENT
+1 * * * * root Command with % (this will warn)
+# WARN 1 for probable missing user.
+# chkcrontab: enable-msg=USER_NOT_FOUND
+@monthly Missing User
