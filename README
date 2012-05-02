@@ -1,9 +1,10 @@
-DESCRIPTION
+Crontab linter.
 
-chkcrontab.py is a script to check crontab files like those in /etc/cron.d
-and /etc/crontab.  It tries to catch glaring errors and warn on suspect
-lines in a crontab file.  Some valid lines will generate warnings.
-Certain silly yet valid crontab lines will generate errors as well.
+chkcrontab.py is a script to check crontab files like those in
+/etc/cron.d and /etc/crontab.  It tries to catch glaring errors
+and warn on suspect lines in a crontab file.  Some valid lines
+will generate warnings.  Certain silly yet valid crontab lines
+will generate errors as well.
 
 Run this by doing ./chkcrontab.py crontab_file
 
@@ -13,8 +14,8 @@ To see sample output for a bad crontab, run the following:
 
   ./chkcrontab.py ./tests/test_crontab
 
-See the ./tests/test_crontab.disable crontab for how to disable warnings
-and errors.
+See the ./tests/test_crontab.disable crontab for how to disable
+warnings and errors.
 
 CONTRIBUTIONS
 
