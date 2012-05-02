@@ -122,7 +122,7 @@ setup(
               'dist_clean': CleanCommand
              },
     name='chkcrontab',
-    version='1.0',
+    version='1.1',
     url='http://code.google.com/p/chkcrontab',
     author='Kevin Lyda',
     author_email='lyda@google.com',
@@ -132,6 +132,8 @@ setup(
     scripts=['chkcrontab.py'],
     keywords='check lint crontab',
     # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
+    license = 'Apache Software License',
+    platforms = ['POSIX'],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'Environment :: Console',
                  'License :: OSI Approved :: Apache Software License',
