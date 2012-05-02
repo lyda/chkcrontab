@@ -1,2 +1,5 @@
+MANIFEST
+dist
 build
 *.pyc
+*.swp
