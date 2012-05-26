@@ -129,7 +129,7 @@ setup(
     description='A tool to detect crontab errors',
     long_description=open('README').read(),
     py_modules=['chkcrontab_lib'],
-    scripts=['chkcrontab.py'],
+    scripts=['chkcrontab'],
     keywords='check lint crontab',
     # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
     license = 'Apache Software License',
