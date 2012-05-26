@@ -122,7 +122,7 @@ setup(
               'dist_clean': CleanCommand
              },
     name='chkcrontab',
-    version='1.1',
+    version='1.2',
     url='http://code.google.com/p/chkcrontab',
     author='Kevin Lyda',
     author_email='lyda@google.com',
