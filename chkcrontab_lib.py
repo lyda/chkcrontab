@@ -891,7 +891,7 @@ class LogCounter(object):
     Args:
       message: The message to print as a warning.
     """
-    print 'W:', message
+    print('W:', message)
     self._warn_count += 1
 
   def LineWarn(self, msg_kind, line_warn):
@@ -915,7 +915,7 @@ class LogCounter(object):
     Args:
       message: The message to print as a error.
     """
-    print 'E:', message
+    print('E:', message)
     self._error_count += 1
 
   def LineError(self, msg_kind, line_error):
@@ -946,13 +946,13 @@ class LogCounter(object):
       line_error_fmt = 'e: %s  %%s' % spacer
       line_warn_fmt = 'w: %s  %%s' % spacer
       if self._line_errors:
-        print 'E: %d: %s' % (line_no, line)
+        print('E: %d: %s' % (line_no, line))
       else:
-        print 'W: %d: %s' % (line_no, line)
+        print('W: %d: %s' % (line_no, line))
       for line_error in self._line_errors:
-        print line_error_fmt % line_error
+        print(line_error_fmt % line_error)
       for line_warn in self._line_warns:
-        print line_warn_fmt % line_warn
+        print(line_warn_fmt % line_warn)
       self._line_errors = []
       self._line_warns = []
 
@@ -970,11 +970,11 @@ class LogCounter(object):
     if self._error_count > 0:
       print('E: There were %d errors and %d warnings.'
             % (self._error_count, self._warn_count))
-      print more_info
+      print(more_info)
       return 2
     elif self._warn_count > 0:
-      print 'W: There were %d warnings.' % self._warn_count
-      print more_info
+      print('W: There were %d warnings.' % self._warn_count)
+      print(more_info)
       return 1
     else:
       return 0
@@ -1040,7 +1040,7 @@ def main():
   log = LogCounter()
   if len(sys.argv) != 2:
     log.Error('Must provide a crontab file to check.')
-  print 'Checking correctness of %s' % sys.argv[1]
+  print('Checking correctness of %s' % sys.argv[1])
   return CheckCrontab(sys.argv[1], log)
 
 
