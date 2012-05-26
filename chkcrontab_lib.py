@@ -285,16 +285,17 @@ def InitCronFSM():
   fsm.AddTransition(',', 'range_step', ActionRangeStepComma, 'next')
 
   # Case: <text>
-  fsm.AddTransition(string.letters, 'start', ActionTime, 'text')
-  fsm.AddTransition(string.letters, 'next', ActionTime, 'text')
-  fsm.AddTransition(string.letters, 'text', ActionTime, 'text')
+  fsm.AddTransition(string.ascii_letters, 'start', ActionTime, 'text')
+  fsm.AddTransition(string.ascii_letters, 'next', ActionTime, 'text')
+  fsm.AddTransition(string.ascii_letters, 'text', ActionTime, 'text')
   fsm.AddEndState('text', ActionTextComma)
   fsm.AddTransition(',', 'text', ActionTextComma, 'next')
   # Case: <text>-<text>
   fsm.AddTransition('-', 'text', ActionDash, 'start_text_range')
-  fsm.AddTransition(string.letters, 'start_text_range', ActionTime,
+  fsm.AddTransition(string.ascii_letters, 'start_text_range', ActionTime,
                     'text_range')
-  fsm.AddTransition(string.letters, 'text_range', ActionTime, 'text_range')
+  fsm.AddTransition(string.ascii_letters, 'text_range', ActionTime,
+                    'text_range')
   fsm.AddEndState('text_range', ActionTextRangeComma)
   fsm.AddTransition(',', 'text_range', ActionTextRangeComma, 'next')
   # Case: <text>-<text>/<text>
