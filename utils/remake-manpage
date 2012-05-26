@@ -1,0 +1,11 @@
+#!/bin/bash
+
+manpages="chkcrontab.1"
+
+for mp in $manpages; do
+  if [[ ! -f doc/$mp.rst ]]; then
+    echo "Can't find $mp.rst - run in base dir."
+    exit 1
+  fi
+  rst2man.py doc/$mp.rst > doc/$mp
+done

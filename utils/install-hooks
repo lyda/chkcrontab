@@ -1,0 +1,11 @@
+#!/bin/bash
+
+THIS_GIT_DIR="${0%/*}/.."
+if [[ ! -f $THIS_GIT_DIR/.git/hooks/pre-commit ]]; then
+  cat > $THIS_GIT_DIR/.git/hooks/pre-commit << EOF
+#!/bin/sh
+
+./setup.py test
+EOF
+  chmod 755 $THIS_GIT_DIR/.git/hooks/pre-commit
+fi
