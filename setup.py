@@ -62,7 +62,7 @@ class CleanCommand(Command):
 
   def run(self):
     # Configure for this project.
-    suffixes2del = [ 'MANIFEST', '.pyc' ]
+    suffixes2del = [ 'MANIFEST', '.pyc', 'chkcrontabc' ]
     dirs2del = [ './build', './dist' ]
     dirs2ign = [ './.git' ]
     # End config.
