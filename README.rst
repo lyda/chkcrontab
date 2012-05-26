@@ -30,5 +30,14 @@ warnings and errors.
 Contributions
 =============
 
-Please add unit tests for new features or bug fixes.  To run all
-the unit tests run ``./setup test``.
+Contributions are welcome! Please add unit tests for new features
+or bug fixes.  To run all the unit tests run ``./setup test``.
+
+Unit tests are run on `Travis`_ for all supported python versions.
+
+The main site for this is on code.google.com with a backup site at
+github. Use whichever is convenient, the maintainer will push
+accepted patches to both.
+
+* http://code.google.com/p/chkcrontab/
+* http://code.google.com/p/chkcrontab/
