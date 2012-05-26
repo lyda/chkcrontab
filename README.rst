@@ -40,4 +40,6 @@ github. Use whichever is convenient, the maintainer will push
 accepted patches to both.
 
 * http://code.google.com/p/chkcrontab/
-* http://code.google.com/p/chkcrontab/
+* http://github.com/lyda/chkcrontab/
+
+.. _`Travis`: http://travis-ci.org/
