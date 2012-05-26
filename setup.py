@@ -127,7 +127,7 @@ setup(
     author='Kevin Lyda',
     author_email='lyda@google.com',
     description='A tool to detect crontab errors',
-    long_description=open('README').read(),
+    long_description=open('README.rst').read(),
     py_modules=['chkcrontab_lib'],
     scripts=['chkcrontab'],
     keywords='check lint crontab',
