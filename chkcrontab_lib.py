@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# For Python 2.5
+from __future__ import with_statement
+
 """Processes crontab files and try to catch common errors.
 
 Parse crontab files and check each type of line for potential syntax errors.
@@ -1024,14 +1027,15 @@ def CheckCrontab(crontab_file, log):
 
   line_no = 0
   cron_line_factory = CronLineFactory()
-  for line in open(crontab_file, 'r'):
-    line = line.strip()
-    line_no += 1
+  with open(crontab_file, 'r') as crontab_f:
+    for line in crontab_f:
+      line = line.strip()
+      line_no += 1
 
-    cron_line = cron_line_factory.ParseLine(line)
-    cron_line.ValidateAndLog(log)
+      cron_line = cron_line_factory.ParseLine(line)
+      cron_line.ValidateAndLog(log)
 
-    log.Emit(line_no, line)
+      log.Emit(line_no, line)
 
   # Summarize the log messages if there were any.
   return log.Summary()
