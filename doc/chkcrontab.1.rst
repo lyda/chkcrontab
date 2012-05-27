@@ -36,8 +36,10 @@ The following check are run against the given crontab file.
 
 Bugs
 ----
-Quite possibly. Report them via the `issue tracker`_ at the project
-website.
+Quite possibly. Report them via the issue tracker at the project
+website:
+
+http://code.google.com/p/chkcrontab/issues/list
 
 See Also
 --------
@@ -52,5 +54,3 @@ Copying
 Copyright (C) 2012 Kevin Lyda.
 Free use of this software is granted under the terms of the GNU General
 Public License version 3 or any later version.
-
-.. _`issue tracker`: http://code.google.com/p/chkcrontab/issues/list
