@@ -156,7 +156,6 @@ class InstallCmd(install):
 setup(
     cmdclass={'test': TestCmd,
               'dist_clean': CleanCmd,
-              'dist_clean': CleanCmd,
               'install': InstallCmd,
              },
     name='chkcrontab',
