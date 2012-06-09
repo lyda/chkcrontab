@@ -7,7 +7,6 @@ chkcrontab
 
 Crontab linter
 ==============
-
 chkcrontab is a script to check crontab files like those in
 ``/etc/cron.d`` and ``/etc/crontab``.  It tries to catch glaring
 errors and warn on suspect lines in a crontab file.  Some valid
@@ -29,7 +28,6 @@ warnings and errors.
 
 Contributions
 =============
-
 Contributions are welcome! Please add unit tests for new features
 or bug fixes.  To run all the unit tests run ``./setup test``.
 
@@ -41,5 +39,10 @@ accepted patches to both.
 
 * http://code.google.com/p/chkcrontab/
 * http://github.com/lyda/chkcrontab/
+
+TODO
+====
+* Look for duplicate entries.
+* Make sure MAILTO is set (perhaps others?)
 
 .. _`Travis`: http://travis-ci.org/#!/lyda/chkcrontab
