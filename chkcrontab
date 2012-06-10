@@ -24,18 +24,18 @@ Basic usage:
 
 __author__ = 'lyda@google.com (Kevin Lyda)'
 
-import os
 import sys
 import chkcrontab_lib as check
 
 
 def main(argv):
+  """main program."""
   if len(argv) != 2:
     print 'ERROR: No crontab file was specified.'
     sys.exit(1)
   log = check.LogCounter()
   print 'Checking correctness of %s' % argv[1]
-  return check.CheckCrontab(argv[1], log)
+  return check.check_crontab(argv[1], log)
 
 if __name__ == '__main__':
   main(sys.argv)

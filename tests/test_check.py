@@ -311,7 +311,7 @@ class CheckCrontabUnitTest(unittest.TestCase):
     log = check.LogCounter()
     crontab_file = os.path.join(BASE_PATH, crontab)
     (exp_warn, exp_fail, exp_rc) = self.GetExpWFRs(crontab_file)
-    self.assertEquals(check.CheckCrontab(crontab_file, log), exp_rc,
+    self.assertEquals(check.check_crontab(crontab_file, log), exp_rc,
                       'Failed to return %d for crontab errors.' % exp_rc)
     self.assertEquals(log.warn_count, exp_warn,
                       'Found %d warns not %d.' % (log.warn_count, exp_warn))

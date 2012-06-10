@@ -994,7 +994,7 @@ class LogCounter(object):
     return self._error_count
 
 
-def CheckCrontab(crontab_file, log):
+def check_crontab(crontab_file, log):
   """Check a crontab file.
 
   Checks crontab_file for a variety of errors or potential errors.  This only
@@ -1039,15 +1039,3 @@ def CheckCrontab(crontab_file, log):
 
   # Summarize the log messages if there were any.
   return log.Summary()
-
-
-def main():
-  log = LogCounter()
-  if len(sys.argv) != 2:
-    log.Error('Must provide a crontab file to check.')
-  print('Checking correctness of %s' % sys.argv[1])
-  return CheckCrontab(sys.argv[1], log)
-
-
-if __name__ == '__main__':
-  sys.exit(main())

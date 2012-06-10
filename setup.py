@@ -35,7 +35,7 @@ BASE_DIR = os.path.dirname(globals().get('__file__', os.getcwd()))
 
 class TestCmd(Command):
   description = 'Runs all available tests.'
-  user_options = [ ]
+  user_options = []
 
   def initialize_options(self):
     pass
@@ -54,7 +54,7 @@ class TestCmd(Command):
 
 class CleanCmd(Command):
   description = 'Remove all generated files.'
-  user_options = [ ]
+  user_options = []
 
   def initialize_options(self):
     pass
@@ -68,7 +68,7 @@ class CleanCmd(Command):
     dirs2del = [ './build', './dist' ]
     dirs2ign = [ './.git' ]
     # End config.
-    doomed = [ ]
+    doomed = set()
     # Change to base dir.
     os.chdir(BASE_DIR)
     for root, dirs, files in os.walk('.'):
@@ -76,18 +76,18 @@ class CleanCmd(Command):
       if root in dirs2ign:
         continue
       if root in dirs2del:
-        doomed.append(root)
+        doomed.add(root)
       # Handle files.
       for f in files:
         accused = os.path.join(root, f)
         for suffix in suffixes2del:
           if f.endswith(suffix):
-            doomed.append(accused)
+            doomed.add(accused)
             break
         if accused not in doomed:
           for d2del in dirs2del:
             if accused.startswith(d2del):
-              doomed.append(accused)
+              doomed.add(accused)
               break
       # Handle dirs.
       for d in dirs:
@@ -99,7 +99,7 @@ class CleanCmd(Command):
         if d in dirs:
           for d2del in dirs2del:
             if accused.startswith(d2del):
-              doomed.append(accused)
+              doomed.add(accused)
               break
     # Probably not required, but just to be safe.
     for accused in doomed:
@@ -107,8 +107,7 @@ class CleanCmd(Command):
         if accused.startswith(d2ign):
           doomed.remove(accused)
           break
-    doomed.sort(reverse=True)
-    for accused in doomed:
+    for accused in sorted(doomed, reverse=True):
       log.info('removing "%s"', os.path.normpath(accused))
       if not self.dry_run:
         try:
@@ -131,13 +130,13 @@ class InstallCmd(install):
 
   def finalize_options(self):
     install.finalize_options(self)
-    if self.manprefix is None :
+    if self.manprefix is None:
       self.manprefix = os.path.join(self.install_scripts,
                                     '..', 'share', 'man')
 
   def run(self):
     install.run(self)
-    manpages=['doc/chkcrontab.1']
+    manpages = ['doc/chkcrontab.1']
     if self.manprefix:
       for manpage in manpages:
         section = manpage.split('/')[-1].split('.')[-1]
@@ -153,31 +152,36 @@ class InstallCmd(install):
                             os.path.join(manpage_dir, manpage_file),
                             dry_run=self.dry_run)
 
+# Only override install if not being run by setuptools.
+cmdclass = {'test': TestCmd,
+            'dist_clean': CleanCmd,
+            }
+if 'setuptools' not in dir():
+  cmdclass['install'] = InstallCmd
+
 setup(
-    cmdclass={'test': TestCmd,
-              'dist_clean': CleanCmd,
-              'install': InstallCmd,
-             },
-    name='chkcrontab',
-    version='1.2',
-    url='http://code.google.com/p/chkcrontab',
-    author='Kevin Lyda',
-    author_email='lyda@google.com',
-    description='A tool to detect crontab errors',
-    long_description=open('README.rst').read(),
-    py_modules=['chkcrontab_lib'],
-    scripts=['chkcrontab'],
-    keywords='check lint crontab',
-    # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
-    license = 'Apache Software License',
-    platforms = ['POSIX'],
-    classifiers=['Development Status :: 5 - Production/Stable',
-                 'Environment :: Console',
-                 'License :: OSI Approved :: Apache Software License',
-                 'Operating System :: POSIX',
-                 'Programming Language :: Python :: 2.5',
-                 'Programming Language :: Python :: 2.6',
-                 'Programming Language :: Python :: 2.7',
-                 'Topic :: Utilities',
-                ],
+  cmdclass=cmdclass,
+  name='chkcrontab',
+  version='1.2',
+  url='http://code.google.com/p/chkcrontab',
+  author='Kevin Lyda',
+  author_email='lyda@google.com',
+  description='A tool to detect crontab errors',
+  long_description=open('README.rst').read(),
+  py_modules=['chkcrontab_lib'],
+  scripts=['chkcrontab'],
+  keywords='check lint crontab',
+  # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
+  license = 'Apache Software License',
+  platforms = ['POSIX'],
+  classifiers=['Development Status :: 5 - Production/Stable',
+               'Environment :: Console',
+               'License :: OSI Approved :: Apache Software License',
+               'Operating System :: POSIX',
+               'Programming Language :: Python :: 2.5',
+               'Programming Language :: Python :: 2.6',
+               'Programming Language :: Python :: 2.7',
+               'Programming Language :: Python :: 3',
+               'Topic :: Utilities',
+               ],
 )
