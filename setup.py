@@ -162,7 +162,7 @@ if 'setuptools' not in dir():
 setup(
   cmdclass=cmdclass,
   name='chkcrontab',
-  version='1.2',
+  version='1.3',
   url='http://code.google.com/p/chkcrontab',
   author='Kevin Lyda',
   author_email='lyda@google.com',
