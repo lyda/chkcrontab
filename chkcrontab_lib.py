@@ -14,9 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# For Python 2.5
-from __future__ import with_statement
-
 """Processes crontab files and try to catch common errors.
 
 Parse crontab files and check each type of line for potential syntax errors.
@@ -65,8 +62,10 @@ A brief description of each class and function:
 
   Putting it all together:
     CheckCrontab: Checks the a crontab file.
-
 """
+
+# For Python 2.5
+from __future__ import with_statement
 
 __author__ = 'lyda@google.com (Kevin Lyda)'
 
@@ -75,7 +74,6 @@ import os
 import pwd
 import re
 import string
-import sys
 
 
 # The following usernames are created locally by packages.
@@ -120,7 +118,7 @@ class FSM(object):
 
     if state not in self.states:
       self.states[state] = {}
-    self.states[state].update([(c, (action, next_state)) for c in chars])
+    self.states[state].update([(char, (action, next_state)) for char in chars])
 
   def AddEndState(self, state, action):
     """Handle the end state of the FSM.
@@ -152,17 +150,17 @@ class FSM(object):
     data_out = copy.deepcopy(self.data_out_init)
     cur_state = 'start'
     parsed = ''
-    for c in data_in:
+    for char in data_in:
       (action, next_state) = self.states.get(cur_state, {}
-                                            ).get(c, (None, None))
+                                            ).get(char, (None, None))
       if not action:
         data_out['parser_error'] = ('"%s[[%s]]%s"'
-                                    % (parsed, c,
+                                    % (parsed, char,
                                        data_in[len(parsed)+1:len(data_in)]))
         return data_out
-      action(data_out, c)
+      action(data_out, char)
       cur_state = next_state
-      parsed += c
+      parsed += char
     if cur_state not in self.end:
       data_out['parser_error'] = '"%s" is incomplete' % parsed
       return data_out
@@ -170,63 +168,63 @@ class FSM(object):
     return data_out
 
 
-def ActionTime(data_out, c):
-  data_out['time'] += c
+def ActionTime(data_out, char):
+  data_out['time'] += char
 
 
-def ActionStar(data_out, c):
-  data_out['time'] = c
+def ActionStar(data_out, char):
+  data_out['time'] = char
 
 
-def ActionDash(data_out, unused_c):
+def ActionDash(data_out, unused_char):
   data_out['range'] = data_out['time']
   data_out['time'] = ''
 
 
-def ActionStep(data_out, c):
-  data_out['step'] += c
+def ActionStep(data_out, char):
+  data_out['step'] += char
 
 
-def ActionNoop(unused_data_out, unused_c):
+def ActionNoop(unused_data_out, unused_char):
   pass
 
 
-def ActionTimeComma(data_out, unused_c=''):
+def ActionTimeComma(data_out, unused_char=''):
   data_out['cron_times'].append(CTTime(int(data_out['time'])))
   data_out['time'] = ''
 
 
-def ActionStarComma(data_out, unused_c=''):
+def ActionStarComma(data_out, unused_char=''):
   data_out['cron_times'].append(CTStar())
   data_out['time'] = ''
 
 
-def ActionStarStepComma(data_out, unused_c=''):
+def ActionStarStepComma(data_out, unused_char=''):
   data_out['cron_times'].append(CTStarStep(int(data_out['step'])))
   data_out['time'] = ''
   data_out['step'] = ''
 
 
-def ActionTextComma(data_out, unused_c=''):
+def ActionTextComma(data_out, unused_char=''):
   data_out['cron_times'].append(CTText(data_out['time']))
   data_out['time'] = ''
 
 
-def ActionRangeComma(data_out, unused_c=''):
+def ActionRangeComma(data_out, unused_char=''):
   data_out['cron_times'].append(CTRange(int(data_out['range']),
                                         int(data_out['time'])))
   data_out['range'] = ''
   data_out['time'] = ''
 
 
-def ActionTextRangeComma(data_out, unused_c=''):
+def ActionTextRangeComma(data_out, unused_char=''):
   data_out['cron_times'].append(CTTextRange(data_out['range'],
                                             data_out['time']))
   data_out['range'] = ''
   data_out['time'] = ''
 
 
-def ActionRangeStepComma(data_out, unused_c=''):
+def ActionRangeStepComma(data_out, unused_char=''):
   data_out['cron_times'].append(CTRangeStep(int(data_out['range']),
                                             int(data_out['time']),
                                             int(data_out['step'])))
@@ -235,7 +233,7 @@ def ActionRangeStepComma(data_out, unused_c=''):
   data_out['step'] = ''
 
 
-def ActionTextRangeStepComma(data_out, unused_c=''):
+def ActionTextRangeStepComma(data_out, unused_char=''):
   data_out['cron_times'].append(CTTextRangeStep(data_out['range'],
                                                 data_out['time'],
                                                 int(data_out['step'])))
@@ -339,11 +337,13 @@ class CronTimeField(object):
     return self._step
 
   def CheckLowStep(self, diagnostics, cron_time_field):
+    """Checks if a step is too low for a field."""
     if self._step < 1:
       diagnostics.append('%d is too low for field "%s" (%s)'
                          % (self._step, cron_time_field.name, self))
 
   def CheckHighStep(self, diagnostics, cron_time_field):
+    """Checks if a step is too high for a field."""
     if self._step > self._end:
       diagnostics.append('the step (%d) is greater than the last number'
                          ' (%d) in field "%s" (%s)'
@@ -351,22 +351,26 @@ class CronTimeField(object):
                             cron_time_field.name, self))
 
   def CheckLowNum(self, diagnostics, time_field, cron_time_field):
+    """Checks if a number is too low for a field."""
     if time_field < cron_time_field.min_time:
       diagnostics.append('%d is too low for field "%s" (%s)'
                          % (time_field, cron_time_field.name, self))
 
   def CheckHighNum(self, diagnostics, time_field, cron_time_field):
+    """Checks if a number is too high for a field."""
     if time_field > cron_time_field.max_time:
       diagnostics.append('%d is too high for field "%s" (%s)'
                          % (time_field, cron_time_field.name, self))
 
   def CheckRange(self, diagnostics, cron_time_field):
+    """Checks if a range isn't too high for a field."""
     if self._start > self._end:
       diagnostics.append('%d is greater than %d in field "%s" (%s)'
                          % (self._start, self._end, cron_time_field.name,
                             self))
 
   def CheckValidText(self, diagnostics, time_field, cron_time_field):
+    """Checks if a field has valid text."""
     if time_field.lower() not in cron_time_field.valid_text:
       diagnostics.append('%s is not valid for field "%s" (%s)'
                          % (time_field, cron_time_field.name, self))
@@ -383,6 +387,7 @@ class CTTime(CronTimeField):
     self._text = '%d' % start_time
 
   def GetDiagnostics(self, cron_time_field):
+    """Checks for issues with a time field."""
     diagnostics = []
     self.CheckLowNum(diagnostics, self._start, cron_time_field)
     self.CheckHighNum(diagnostics, self._start, cron_time_field)
@@ -401,6 +406,7 @@ class CTRange(CronTimeField):
     self._text = '%d-%d' % (start_time, end_time)
 
   def GetDiagnostics(self, cron_time_field):
+    """Checks for issues with a range field."""
     diagnostics = []
     self.CheckRange(diagnostics, cron_time_field)
     self.CheckLowNum(diagnostics, self._start, cron_time_field)
@@ -421,6 +427,7 @@ class CTRangeStep(CronTimeField):
     self._text = '%d-%d/%d' % (start_time, end_time, step_count)
 
   def GetDiagnostics(self, cron_time_field):
+    """Checks for issues with a range/step field."""
     diagnostics = []
     self.CheckRange(diagnostics, cron_time_field)
     self.CheckLowNum(diagnostics, self._start, cron_time_field)
@@ -441,6 +448,7 @@ class CTStar(CronTimeField):
     self._text = '*'
 
   def GetDiagnostics(self, unused_cron_time_field):
+    """Checks for issues with a star field."""
     return []
 
 
@@ -471,6 +479,7 @@ class CTStarStep(CronTimeField):
     self._text = '*/%d' % step_count
 
   def GetDiagnostics(self, cron_time_field):
+    """Checks for issues with a star/step field."""
     diagnostics = []
     self.CheckLowStep(diagnostics, cron_time_field)
     self.CheckHighNum(diagnostics, self._step, cron_time_field)
@@ -505,6 +514,7 @@ class CTTextRange(CronTimeField):
     self._text = '%s-%s' % (start_time, end_time)
 
   def GetDiagnostics(self, cron_time_field):
+    """Checks for issues with a text range field."""
     diagnostics = []
     self.CheckValidText(diagnostics, self._start, cron_time_field)
     self.CheckValidText(diagnostics, self._end, cron_time_field)
@@ -524,6 +534,7 @@ class CTTextRangeStep(CronTimeField):
     self._text = '%s-%s/%s' % (start_time, end_time, step_count)
 
   def GetDiagnostics(self, cron_time_field):
+    """Checks for issues with a text range / step field."""
     diagnostics = []
     self.CheckValidText(diagnostics, self._start, cron_time_field)
     self.CheckValidText(diagnostics, self._end, cron_time_field)
@@ -579,6 +590,7 @@ class CronLineEmpty(object):
   """For empty lines."""
 
   def ValidateAndLog(self, log):
+    """Nothing really to validate for empty lines."""
     pass
 
 
@@ -612,6 +624,7 @@ class CronLineComment(object):
   """For Comment lines."""
 
   def ValidateAndLog(self, log):
+    """Nothing really to validate for Comment lines."""
     pass
 
 
@@ -637,11 +650,6 @@ class CronLineAssignment(object):
       log.LineWarn(log.MSG_SHELL_VAR,
                    'Variable assignments in crontabs are not like shell.'
                    '  $VAR is not expanded.')
-    # TODO(lyda): Possible additions:
-    #             * Check for backticks.
-    #             Possible collective additions:
-    #             * Make sure MAILTO is set.
-    #             * Make sure PATH is set.
 
 
 class CronLineTimeAction(object):

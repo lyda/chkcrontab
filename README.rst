@@ -30,8 +30,10 @@ Contributions
 =============
 Contributions are welcome! Please add unit tests for new features
 or bug fixes.  To run all the unit tests run ``./setup test``.
+If you have `tox`_ installed, just run ``tox``.
 
-Unit tests are run on `Travis`_ for all supported python versions.
+Note that tests are run on `Travis`_ for all supported python
+versions whenever the tree on github is pushed to.
 
 The main site for this is on code.google.com with a backup site at
 github. Use whichever is convenient, the maintainer will push
@@ -42,7 +44,15 @@ accepted patches to both.
 
 TODO
 ====
-* Look for duplicate entries.
-* Make sure MAILTO is set (perhaps others?)
+* Look for duplicate entries. Puppet sometimes loads up crontabs
+  with dups.
+* Check for backticks. (why?)
+* Make sure MAILTO and PATH are set (perhaps others?)
 
+Credits
+=======
+- `Kevin Lyda`_: Who got burned one too many times by broken crontabs.
+
+.. _`tox`: http://pypi.python.org/pypi/tox
 .. _`Travis`: http://travis-ci.org/#!/lyda/chkcrontab
+.. _`Kevin Lyda`: https://github.com/lyda
