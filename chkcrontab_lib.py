@@ -58,7 +58,8 @@ A brief description of each class and function:
                      cron line.
 
   Logging class to pretty-print output:
-    LogCounter: A logging class that provides a summary of warnings and errors.
+    LogCounter: A logging class that provides a summary of warnings and
+                errors.
 
   Putting it all together:
     CheckCrontab: Checks the a crontab file.
@@ -118,7 +119,8 @@ class FSM(object):
 
     if state not in self.states:
       self.states[state] = {}
-    self.states[state].update([(char, (action, next_state)) for char in chars])
+    self.states[state].update([(char, (action, next_state))
+                               for char in chars])
 
   def AddEndState(self, state, action):
     """Handle the end state of the FSM.
@@ -168,63 +170,75 @@ class FSM(object):
     return data_out
 
 
-def ActionTime(data_out, char):
+def action_time(data_out, char):
+  """Add a char to time."""
   data_out['time'] += char
 
 
-def ActionStar(data_out, char):
+def action_star(data_out, char):
+  """Add a char to time."""
   data_out['time'] = char
 
 
-def ActionDash(data_out, unused_char):
+def action_dash(data_out, unused_char):
+  """Move time to range, reset time."""
   data_out['range'] = data_out['time']
   data_out['time'] = ''
 
 
-def ActionStep(data_out, char):
+def action_step(data_out, char):
+  """Add a char to step."""
   data_out['step'] += char
 
 
-def ActionNoop(unused_data_out, unused_char):
+def action_noop(unused_data_out, unused_char):
+  """Do nothing."""
   pass
 
 
-def ActionTimeComma(data_out, unused_char=''):
+def action_time_comma(data_out, unused_char=''):
+  """Move time to cron_times, reset time."""
   data_out['cron_times'].append(CTTime(int(data_out['time'])))
   data_out['time'] = ''
 
 
-def ActionStarComma(data_out, unused_char=''):
+def action_star_comma(data_out, unused_char=''):
+  """Set cron_times, reset time."""
   data_out['cron_times'].append(CTStar())
   data_out['time'] = ''
 
 
-def ActionStarStepComma(data_out, unused_char=''):
+def action_star_step_comma(data_out, unused_char=''):
+  """Set cron_times, reset time & step."""
   data_out['cron_times'].append(CTStarStep(int(data_out['step'])))
   data_out['time'] = ''
   data_out['step'] = ''
 
 
-def ActionTextComma(data_out, unused_char=''):
+def action_text_comma(data_out, unused_char=''):
+  """Set cron_times from time, reset time."""
   data_out['cron_times'].append(CTText(data_out['time']))
   data_out['time'] = ''
 
 
-def ActionRangeComma(data_out, unused_char=''):
+def action_range_comma(data_out, unused_char=''):
+  """Set cron_times from range & time, reset range & time."""
   data_out['cron_times'].append(CTRange(int(data_out['range']),
                                         int(data_out['time'])))
   data_out['range'] = ''
   data_out['time'] = ''
 
 
-def ActionTextRangeComma(data_out, unused_char=''):
+def action_text_range_comma(data_out, unused_char=''):
+  """Set cron_times from range & time, reset range & time."""
   data_out['cron_times'].append(CTTextRange(data_out['range'],
                                             data_out['time']))
   data_out['range'] = ''
   data_out['time'] = ''
 
 
-def ActionRangeStepComma(data_out, unused_char=''):
+def action_range_step_comma(data_out, unused_char=''):
+  """Set cron_times from range, time & step, reset range, time & step."""
   data_out['cron_times'].append(CTRangeStep(int(data_out['range']),
                                             int(data_out['time']),
                                             int(data_out['step'])))
@@ -233,7 +247,8 @@ def ActionRangeStepComma(data_out, unused_char=''):
   data_out['step'] = ''
 
 
-def ActionTextRangeStepComma(data_out, unused_char=''):
+def action_text_range_step_comma(data_out, unused_char=''):
+  """Set cron_times from range, time & step, reset range, time & step."""
   data_out['cron_times'].append(CTTextRangeStep(data_out['range'],
                                                 data_out['time'],
                                                 int(data_out['step'])))
@@ -254,59 +269,61 @@ def InitCronFSM():
                   'cron_times': []}))
 
   # Case: *
-  fsm.AddTransition('*', 'start', ActionStar, 'star')
-  fsm.AddTransition('*', 'next', ActionStar, 'star')
-  fsm.AddEndState('star', ActionStarComma)
-  fsm.AddTransition(',', 'star', ActionStarComma, 'next')
+  fsm.AddTransition('*', 'start', action_star, 'star')
+  fsm.AddTransition('*', 'next', action_star, 'star')
+  fsm.AddEndState('star', action_star_comma)
+  fsm.AddTransition(',', 'star', action_star_comma, 'next')
   # Case: */<number>
-  fsm.AddTransition('/', 'star', ActionNoop, 'start_star_step')
-  fsm.AddTransition(string.digits, 'start_star_step', ActionStep, 'star_step')
-  fsm.AddTransition(string.digits, 'star_step', ActionStep, 'star_step')
-  fsm.AddEndState('star_step', ActionStarStepComma)
-  fsm.AddTransition(',', 'star_step', ActionStarStepComma, 'next')
+  fsm.AddTransition('/', 'star', action_noop, 'start_star_step')
+  fsm.AddTransition(string.digits, 'start_star_step', action_step,
+                    'star_step')
+  fsm.AddTransition(string.digits, 'star_step', action_step, 'star_step')
+  fsm.AddEndState('star_step', action_star_step_comma)
+  fsm.AddTransition(',', 'star_step', action_star_step_comma, 'next')
 
   # Case: <number>
-  fsm.AddTransition(string.digits, 'start', ActionTime, 'time')
-  fsm.AddTransition(string.digits, 'next', ActionTime, 'time')
-  fsm.AddTransition(string.digits, 'time', ActionTime, 'time')
-  fsm.AddEndState('time', ActionTimeComma)
-  fsm.AddTransition(',', 'time', ActionTimeComma, 'next')
+  fsm.AddTransition(string.digits, 'start', action_time, 'time')
+  fsm.AddTransition(string.digits, 'next', action_time, 'time')
+  fsm.AddTransition(string.digits, 'time', action_time, 'time')
+  fsm.AddEndState('time', action_time_comma)
+  fsm.AddTransition(',', 'time', action_time_comma, 'next')
   # Case: <number>-<number>
-  fsm.AddTransition('-', 'time', ActionDash, 'start_range')
-  fsm.AddTransition(string.digits, 'start_range', ActionTime, 'range')
-  fsm.AddTransition(string.digits, 'range', ActionTime, 'range')
-  fsm.AddEndState('range', ActionRangeComma)
-  fsm.AddTransition(',', 'range', ActionRangeComma, 'next')
+  fsm.AddTransition('-', 'time', action_dash, 'start_range')
+  fsm.AddTransition(string.digits, 'start_range', action_time, 'range')
+  fsm.AddTransition(string.digits, 'range', action_time, 'range')
+  fsm.AddEndState('range', action_range_comma)
+  fsm.AddTransition(',', 'range', action_range_comma, 'next')
   # Case: <number>-<number>/<number>
-  fsm.AddTransition('/', 'range', ActionNoop, 'start_range_step')
+  fsm.AddTransition('/', 'range', action_noop, 'start_range_step')
   fsm.AddTransition(string.digits, 'start_range_step',
-                    ActionStep, 'range_step')
-  fsm.AddTransition(string.digits, 'range_step', ActionStep, 'range_step')
-  fsm.AddEndState('range_step', ActionRangeStepComma)
-  fsm.AddTransition(',', 'range_step', ActionRangeStepComma, 'next')
+                    action_step, 'range_step')
+  fsm.AddTransition(string.digits, 'range_step', action_step, 'range_step')
+  fsm.AddEndState('range_step', action_range_step_comma)
+  fsm.AddTransition(',', 'range_step', action_range_step_comma, 'next')
 
   # Case: <text>
-  fsm.AddTransition(string.ascii_letters, 'start', ActionTime, 'text')
-  fsm.AddTransition(string.ascii_letters, 'next', ActionTime, 'text')
-  fsm.AddTransition(string.ascii_letters, 'text', ActionTime, 'text')
-  fsm.AddEndState('text', ActionTextComma)
-  fsm.AddTransition(',', 'text', ActionTextComma, 'next')
+  fsm.AddTransition(string.ascii_letters, 'start', action_time, 'text')
+  fsm.AddTransition(string.ascii_letters, 'next', action_time, 'text')
+  fsm.AddTransition(string.ascii_letters, 'text', action_time, 'text')
+  fsm.AddEndState('text', action_text_comma)
+  fsm.AddTransition(',', 'text', action_text_comma, 'next')
   # Case: <text>-<text>
-  fsm.AddTransition('-', 'text', ActionDash, 'start_text_range')
-  fsm.AddTransition(string.ascii_letters, 'start_text_range', ActionTime,
+  fsm.AddTransition('-', 'text', action_dash, 'start_text_range')
+  fsm.AddTransition(string.ascii_letters, 'start_text_range', action_time,
                     'text_range')
-  fsm.AddTransition(string.ascii_letters, 'text_range', ActionTime,
+  fsm.AddTransition(string.ascii_letters, 'text_range', action_time,
                     'text_range')
-  fsm.AddEndState('text_range', ActionTextRangeComma)
-  fsm.AddTransition(',', 'text_range', ActionTextRangeComma, 'next')
+  fsm.AddEndState('text_range', action_text_range_comma)
+  fsm.AddTransition(',', 'text_range', action_text_range_comma, 'next')
   # Case: <text>-<text>/<text>
-  fsm.AddTransition('/', 'text_range', ActionNoop, 'start_text_range_step')
-  fsm.AddTransition(string.digits, 'start_text_range_step', ActionStep,
+  fsm.AddTransition('/', 'text_range', action_noop, 'start_text_range_step')
+  fsm.AddTransition(string.digits, 'start_text_range_step', action_step,
                     'text_range_step')
-  fsm.AddTransition(string.digits, 'text_range_step', ActionStep,
+  fsm.AddTransition(string.digits, 'text_range_step', action_step,
                     'text_range_step')
-  fsm.AddEndState('text_range_step', ActionTextRangeStepComma)
-  fsm.AddTransition(',', 'text_range_step', ActionTextRangeStepComma, 'next')
+  fsm.AddEndState('text_range_step', action_text_range_step_comma)
+  fsm.AddTransition(',', 'text_range_step', action_text_range_step_comma,
+                    'next')
 
   return fsm
 
@@ -315,25 +332,33 @@ class CronTimeField(object):
   """CronTimeField superclass for various time specifiers in cron fields."""
 
   def __init__(self):
-    pass
+    self._text = None
+    self._kind = None
+    self._start = None
+    self._end = None
+    self._step = None
 
   def __str__(self):
     return self._text
 
   @property
   def kind(self):
+    """Kind field."""
     return self._kind
 
   @property
   def start(self):
+    """Start value of this field."""
     return self._start
 
   @property
   def end(self):
+    """End value of this field."""
     return self._end
 
   @property
   def step(self):
+    """Step for this field."""
     return self._step
 
   def CheckLowStep(self, diagnostics, cron_time_field):
@@ -497,6 +522,7 @@ class CTText(CronTimeField):
     self._text = '%s' % start_time
 
   def GetDiagnostics(self, cron_time_field):
+    """Checks for issues with a text field."""
     diagnostics = []
     self.CheckValidText(diagnostics, self._start, cron_time_field)
     return diagnostics
@@ -551,11 +577,14 @@ class CronTimeFieldLimit(object):
     self.min_time = min_time
     self.max_time = max_time
     self.valid_text = valid_text
+    self._name = None
 
   def _GetName(self):
+    """Return the name."""
     return self._name
 
   def _SetName(self, name):
+    """Set the name."""
     self._name = name
 
   name = property(_GetName, _SetName,
@@ -663,6 +692,9 @@ class CronLineTimeAction(object):
     self.user = user
     self.command = command
 
+  def _CheckTimeField(self, log):
+    pass
+
   def ValidateAndLog(self, log):
     """Validates an @ time spec line and logs any errors and warnings.
 
@@ -675,7 +707,8 @@ class CronLineTimeAction(object):
     if self.user in USER_WHITELIST:
       return
     elif len(self.user) > 31:
-      log.LineError(log.MSG_INVALID_USER, 'Username too long "%s"' % self.user)
+      log.LineError(log.MSG_INVALID_USER,
+                    'Username too long "%s"' % self.user)
     elif self.user.startswith('-'):
       log.LineError(log.MSG_INVALID_USER, 'Invalid username "%s"' % self.user)
     elif re.search(r'[\s!"#$%&\'()*+,/:;<=>?@[\\\]^`{|}~]', self.user):
@@ -811,6 +844,7 @@ class CronLineFactory(object):
 
 
 class LogMsgKindNotFound(Exception):
+  """Exception for broken log messages."""
   pass
 
 

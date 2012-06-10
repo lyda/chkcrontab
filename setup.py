@@ -64,9 +64,9 @@ class CleanCmd(Command):
 
   def run(self):
     # Configure for this project.
-    suffixes2del = [ 'MANIFEST', '.pyc', 'chkcrontabc' ]
-    dirs2del = [ './build', './dist' ]
-    dirs2ign = [ './.git' ]
+    suffixes2del = ['MANIFEST', '.pyc', 'chkcrontabc']
+    dirs2del = ['./build', './dist', './.tox', './.coverage']
+    dirs2ign = ['./.git']
     # End config.
     doomed = set()
     # Change to base dir.
@@ -162,7 +162,7 @@ if 'setuptools' not in dir():
 setup(
   cmdclass=cmdclass,
   name='chkcrontab',
-  version='1.3',
+  version='1.4a',
   url='http://code.google.com/p/chkcrontab',
   author='Kevin Lyda',
   author_email='lyda@google.com',
