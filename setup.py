@@ -65,7 +65,8 @@ class CleanCmd(Command):
   def run(self):
     # Configure for this project.
     suffixes2del = ['MANIFEST', '.pyc', 'chkcrontabc']
-    dirs2del = ['./build', './dist', './.tox', './.coverage']
+    dirs2del = ['./build', './dist', './.tox', './.coverage',
+                './__pycache__']
     dirs2ign = ['./.git']
     # End config.
     doomed = set()
