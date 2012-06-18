@@ -1,6 +1,7 @@
 MANIFEST
-dist
-build
+build/
+dist/
+htmlcov/
 *.pyc
 *.swp
 .tox

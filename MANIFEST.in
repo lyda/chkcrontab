@@ -2,4 +2,4 @@ include LICENSE OWNERS README.rst
 include chkcrontab
 include chkcrontab_lib.py
 include setup.py
-recursive-include tests test*
+recursive-include tests test* cq.sh
