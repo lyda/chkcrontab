@@ -342,22 +342,22 @@ class CronTimeField(object):
     return self._text
 
   @property
-  def kind(self):
+  def Kind(self):
     """Kind field."""
     return self._kind
 
   @property
-  def start(self):
+  def Start(self):
     """Start value of this field."""
     return self._start
 
   @property
-  def end(self):
+  def End(self):
     """End value of this field."""
     return self._end
 
   @property
-  def step(self):
+  def Step(self):
     """Step for this field."""
     return self._step
 
@@ -488,7 +488,7 @@ def ChkCTStarOnly(cron_time_field):
   """
   if not cron_time_field:
     return True
-  if len(cron_time_field) == 1 and cron_time_field[0].kind == 'star':
+  if len(cron_time_field) == 1 and cron_time_field[0].Kind == 'star':
     return True
   return False
 
@@ -693,6 +693,7 @@ class CronLineTimeAction(object):
     self.command = command
 
   def _CheckTimeField(self, log):
+    """Virtual method to be implemented by subclasses to check time field."""
     pass
 
   def ValidateAndLog(self, log):
@@ -782,6 +783,11 @@ class CronLineUnknown(object):
   """For unrecognised cron lines."""
 
   def ValidateAndLog(self, log):
+    """Emits an error for unrecognised cron lines.
+
+    Args:
+      log: A LogCounter instance to record issues.
+    """
     log.LineError(log.MSG_LINE_ERROR, 'Failed to parse line.')
 
 

@@ -71,10 +71,10 @@ class FSMUnitTest(unittest.TestCase):
                            len(parsed_fields['cron_times'])))
       for i in range(min(len(parsed_fields['cron_times']),
                          len(check_parsed_fields['cron_times']))):
-        self.assertEquals(parsed_fields['cron_times'][i].kind,
+        self.assertEquals(parsed_fields['cron_times'][i].Kind,
                           check_parsed_fields['cron_times'][i][0],
                           'Parser detected "%s" field not "%s"'
-                          % (parsed_fields['cron_times'][i].kind,
+                          % (parsed_fields['cron_times'][i].Kind,
                              check_parsed_fields['cron_times'][i][0]))
         self.assertEquals('%s' % parsed_fields['cron_times'][i],
                           check_parsed_fields['cron_times'][i][1],
