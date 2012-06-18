@@ -66,7 +66,7 @@ class CleanCmd(Command):
     # Configure for this project.
     suffixes2del = ['MANIFEST', '.pyc', 'chkcrontabc']
     dirs2del = ['./build', './dist', './.tox', './.coverage',
-                './__pycache__', './htmlcov']
+                './__pycache__', './tests/__pycache__', './htmlcov']
     dirs2ign = ['./.git']
     # End config.
     doomed = set()
