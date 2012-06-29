@@ -51,7 +51,8 @@ TODO
 * Look for duplicate entries. Puppet sometimes loads up crontabs
   with dups.
 * Check for backticks. (why?)
-* Make sure MAILTO and PATH are set (perhaps others?)
+* Make sure MAILTO and PATH are set (perhaps others?).
+* Add tests for command line.
 
 Credits
 =======

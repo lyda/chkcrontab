@@ -22,6 +22,8 @@ Basic usage:
   chkcrontab crontab_file
 """
 
+from __future__ import print_function
+
 __author__ = 'lyda@google.com (Kevin Lyda)'
 
 import sys
@@ -31,10 +33,10 @@ import chkcrontab_lib as check
 def main(argv):
   """main program."""
   if len(argv) != 2:
-    print 'ERROR: No crontab file was specified.'
+    print('ERROR: No crontab file was specified.')
     sys.exit(1)
   log = check.LogCounter()
-  print 'Checking correctness of %s' % argv[1]
+  print('Checking correctness of %s' % argv[1])
   return check.check_crontab(argv[1], log)
 
 if __name__ == '__main__':

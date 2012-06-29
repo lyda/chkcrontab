@@ -65,6 +65,7 @@ A brief description of each class and function:
     CheckCrontab: Checks the a crontab file.
 """
 
+from __future__ import print_function
 # For Python 2.5
 from __future__ import with_statement
 
