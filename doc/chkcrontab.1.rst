@@ -52,5 +52,4 @@ Project website: http://code.google.com/p/chkcrontab
 Copying
 -------
 Copyright (C) 2012 Kevin Lyda.
-Free use of this software is granted under the terms of the GNU General
-Public License version 3 or any later version.
+Licensed under the Apache License, Version 2.0
