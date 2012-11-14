@@ -84,7 +84,7 @@ USER_WHITELIST = set(('postgres', 'buildbot',
 # The following extensions imply further postprocessing or that the slack
 # role was for a cron that allowed dots in cron scripts.
 FILE_RE_WHITELIST = [re.compile(x) for x in
-                     ('\.in$', '\.cron$', '\.disabled$')]
+                     (r'\.in$', r'\.cron$', r'\.disabled$', r'^(\S+\.)?cron\.d$')]
 
 
 class FSM(object):
