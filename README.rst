@@ -39,12 +39,15 @@ You can review `coverage`_ of added tests by running
 Note that tests are run on `Travis`_ for all supported python
 versions whenever the tree on github is pushed to.
 
-The main site for this is on code.google.com with a backup site at
-github. Use whichever is convenient, the maintainer will push
-accepted patches to both.
+The code is available in the following locations:
 
-* http://code.google.com/p/chkcrontab/
-* http://github.com/lyda/chkcrontab/
+* Bitbucket: https://bitbucket.org/lyda/chkcrontab/src
+* code.google: http://code.google.com/p/chkcrontab/
+* Github: https://github.com/lyda/chkcrontab
+* Gitorious: https://gitorious.org/uu/chkcrontab
+
+Pull requests on any of those platforms or emailed patches are fine.
+Opening issues on github is easiest, but I'll check any of them.
 
 TODO
 ====
