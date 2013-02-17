@@ -26,18 +26,28 @@ from __future__ import print_function
 
 __author__ = 'lyda@google.com (Kevin Lyda)'
 
+import optparse
 import sys
-import chkcrontab_lib as check
+import chkcrontab_lib
 
 
 def main(argv):
   """main program."""
-  if len(argv) != 2:
+  parser = optparse.OptionParser(
+      usage='Usage: chkcrontab [-h] [files]',
+      description='Checks crontabs for syntax and some semantic errors.',
+      epilog='  files: Zero or more files to check.',
+      add_help_option=True)
+  opts, crontabs = parser.parse_args()
+  if len(crontabs) < 1:
     print('ERROR: No crontab file was specified.')
     sys.exit(1)
-  log = check.LogCounter()
-  print('Checking correctness of %s' % argv[1])
-  return check.check_crontab(argv[1], log)
+  result = 0
+  for crontab in crontabs:
+    print('Checking correctness of %s' % crontab)
+    log = chkcrontab_lib.LogCounter()
+    result += chkcrontab_lib.check_crontab(argv[1], log)
+  return result
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv))
