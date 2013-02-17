@@ -7,6 +7,14 @@ chkcrontab
 
 Crontab linter
 ==============
+.. sidebar:: Output Description
+   :subtitle: Whatcha talkin bout Willis?
+
+   The output of ``chkcrontab`` is described on the `CheckCrontab`_
+   wiki page. A link to it appears in the output if there were any
+   warnings or errors. It also suggests ways to fix the reported
+   issues.
+
 chkcrontab is a script to check crontab files like those in
 ``/etc/cron.d`` and ``/etc/crontab``.  It tries to catch glaring
 errors and warn on suspect lines in a crontab file.  Some valid
@@ -41,7 +49,7 @@ versions whenever the tree on github is pushed to.
 
 The code is available in the following locations:
 
-* Bitbucket: https://bitbucket.org/lyda/chkcrontab/src
+* Bitbucket: https://bitbucket.org/lyda/chkcrontab/
 * code.google: http://code.google.com/p/chkcrontab/
 * Github: https://github.com/lyda/chkcrontab
 * Gitorious: https://gitorious.org/uu/chkcrontab
@@ -65,3 +73,4 @@ Credits
 .. _`coverage`: http://pypi.python.org/pypi/coverage
 .. _`Travis`: http://travis-ci.org/#!/lyda/chkcrontab
 .. _`Kevin Lyda`: https://github.com/lyda
+.. _`CheckCrontab`: http://goo.gl/7XS9q
