@@ -1,8 +1,8 @@
 ==========
 chkcrontab
 ==========
-.. image:: https://secure.travis-ci.org/lyda/chkcrontab.png
-   :target: https://secure.travis-ci.org/lyda/chkcrontab
+.. image:: https://api.travis-ci.org/lyda/chkcrontab.png
+   :target: https://travis-ci.org/lyda/chkcrontab
    :alt: Build status
 
 Crontab linter
