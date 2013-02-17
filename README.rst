@@ -7,14 +7,6 @@ chkcrontab
 
 Crontab linter
 ==============
-.. sidebar:: Output Description
-   :subtitle: Whatcha talkin bout Willis?
-
-   The output of ``chkcrontab`` is described on the `CheckCrontab`_
-   wiki page. A link to it appears in the output if there were any
-   warnings or errors. It also suggests ways to fix the reported
-   issues.
-
 chkcrontab is a script to check crontab files like those in
 ``/etc/cron.d`` and ``/etc/crontab``.  It tries to catch glaring
 errors and warn on suspect lines in a crontab file.  Some valid
@@ -33,6 +25,14 @@ To see sample output for a bad crontab, run the following::
 
 See the ``./tests/test_crontab.disable`` crontab for how to disable
 warnings and errors.
+
+Output Description
+~~~~~~~~~~~~~~~~~~
+
+The output of ``chkcrontab`` is described on the `CheckCrontab`_
+wiki page. A link to it appears in the output if there were any
+warnings or errors. It also suggests ways to fix the reported
+issues.
 
 Contributions
 =============
