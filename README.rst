@@ -53,6 +53,7 @@ The code is available in the following locations:
 * code.google: http://code.google.com/p/chkcrontab/
 * Github: https://github.com/lyda/chkcrontab
 * Gitorious: https://gitorious.org/uu/chkcrontab
+* Sourceforge: https://sourceforge.net/p/chkcrontab
 
 Pull requests on any of those platforms or emailed patches are fine.
 Opening issues on github is easiest, but I'll check any of them.
