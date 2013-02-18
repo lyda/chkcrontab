@@ -1,7 +1,7 @@
 ==========
 chkcrontab
 ==========
-.. image:: https://api.travis-ci.org/lyda/chkcrontab.png
+.. image:: https://travis-ci.org/lyda/chkcrontab.png?branch=master
    :target: https://travis-ci.org/lyda/chkcrontab
    :alt: Build status
 
