@@ -68,6 +68,8 @@ TODO
 * Check for backticks. (why?)
 * Make sure MAILTO and PATH are set (perhaps others?).
 * Add tests for command line.
+* Enable it to parse user crontabs: https://code.google.com/p/chkcrontab/issues/detail?id=2
+* Make "acceptable filenames" a configurable thing: https://github.com/lyda/chkcrontab/issues/4
 
 Credits
 =======
