@@ -47,10 +47,13 @@ You can review `coverage`_ of added tests by running
 Note that tests are run on `Travis`_ for all supported python
 versions whenever the tree on github is pushed to.
 
-The code is available in the following locations:
+The packaged version is available via ``pip`` or ``easy_install``
+as ``chkcrontab``. The project page is on `pypi`_:
+
+The source code is available in the following locations:
 
 * Bitbucket: https://bitbucket.org/lyda/chkcrontab/
-* code.google: http://code.google.com/p/chkcrontab/
+* code.google: https://code.google.com/p/chkcrontab/
 * Github: https://github.com/lyda/chkcrontab
 * Gitorious: https://gitorious.org/uu/chkcrontab
 * Sourceforge: https://sourceforge.net/p/chkcrontab
@@ -70,8 +73,9 @@ Credits
 =======
 - `Kevin Lyda`_: Who got burned one too many times by broken crontabs.
 
-.. _`tox`: http://pypi.python.org/pypi/tox
-.. _`coverage`: http://pypi.python.org/pypi/coverage
-.. _`Travis`: http://travis-ci.org/#!/lyda/chkcrontab
+.. _`tox`: https://pypi.python.org/pypi/tox
+.. _`coverage`: https://pypi.python.org/pypi/coverage
+.. _`Travis`: https://travis-ci.org/lyda/chkcrontab
 .. _`Kevin Lyda`: https://github.com/lyda
 .. _`CheckCrontab`: http://goo.gl/7XS9q
+.. _`pypi`: https://pypi.python.org/pypi/chkcrontab
