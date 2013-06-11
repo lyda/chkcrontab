@@ -32,9 +32,16 @@ import chkcrontab_lib as check
 
 def main(argv):
   """main program."""
-  if len(argv) != 2:
+  if len(argv) == 1:
     print('ERROR: No crontab file was specified.')
     sys.exit(1)
+
+  if len(argv) > 2:
+    for arg in argv:
+      if '--whitelist' in arg:
+        whitelist_users = arg['--whitelist='.__len__():].split(',')
+
+
   log = check.LogCounter()
   print('Checking correctness of %s' % argv[1])
   return check.check_crontab(argv[1], log)
