@@ -36,15 +36,15 @@ def main(argv):
     print('ERROR: No crontab file was specified.')
     sys.exit(1)
 
+  whitelisted_users = None
   if len(argv) > 2:
     for arg in argv:
       if '--whitelist' in arg:
-        whitelist_users = arg['--whitelist='.__len__():].split(',')
-
+        whitelisted_users = arg['--whitelist='.__len__():].split(',')
 
   log = check.LogCounter()
   print('Checking correctness of %s' % argv[1])
-  return check.check_crontab(argv[1], log)
+  return check.check_crontab(argv[1], log, whitelisted_users)
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv))
