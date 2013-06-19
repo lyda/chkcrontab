@@ -1052,6 +1052,7 @@ def check_crontab(crontab_file, log, whitelisted_users=None):
   Args:
     crontab_file: Name of the crontab file to check.
     log: A LogCounter object.
+    whitelisted_users: A comma delimited list of users to ignore when warning on unrecognized users.
 
   Returns:
     0 if there were no errors.
@@ -1064,7 +1065,7 @@ def check_crontab(crontab_file, log, whitelisted_users=None):
     return log.Summary()
 
   # Add the any specified users to the whitelist
-  if not whitelisted_users is None:
+  if whitelisted_users:
     USER_WHITELIST.update(whitelisted_users)
 
   # Check the file name.
