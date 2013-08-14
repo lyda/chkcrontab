@@ -1043,7 +1043,7 @@ class LogCounter(object):
     return self._error_count
 
 
-def check_crontab(crontab_file, log):
+def check_crontab(crontab_file, log, whitelisted_users=None):
   """Check a crontab file.
 
   Checks crontab_file for a variety of errors or potential errors.  This only
@@ -1052,6 +1052,7 @@ def check_crontab(crontab_file, log):
   Args:
     crontab_file: Name of the crontab file to check.
     log: A LogCounter object.
+    whitelisted_users: A comma delimited list of users to ignore when warning on unrecognized users.
 
   Returns:
     0 if there were no errors.
@@ -1062,6 +1063,10 @@ def check_crontab(crontab_file, log):
   # Check if the file even exists.
   if not os.path.exists(crontab_file):
     return log.Summary()
+
+  # Add the any specified users to the whitelist
+  if whitelisted_users:
+    USER_WHITELIST.update(whitelisted_users)
 
   # Check the file name.
   if re.search('[^A-Za-z0-9_-]', os.path.basename(crontab_file)):
