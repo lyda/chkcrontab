@@ -307,11 +307,11 @@ class CheckCrontabUnitTest(unittest.TestCase):
       exp_rc = 0
     return (exp_warn, exp_fail, exp_rc)
 
-  def CheckACrontab(self, crontab):
+  def CheckACrontab(self, crontab, whitelisted_users=None):
     log = check.LogCounter()
     crontab_file = os.path.join(BASE_PATH, crontab)
     (exp_warn, exp_fail, exp_rc) = self.GetExpWFRs(crontab_file)
-    self.assertEquals(check.check_crontab(crontab_file, log), exp_rc,
+    self.assertEquals(check.check_crontab(crontab_file, log, whitelisted_users), exp_rc,
                       'Failed to return %d for crontab errors.' % exp_rc)
     self.assertEquals(log.warn_count, exp_warn,
                       'Found %d warns not %d.' % (log.warn_count, exp_warn))
@@ -329,6 +329,9 @@ class CheckCrontabUnitTest(unittest.TestCase):
 
   def testCheckBadWithDisablesCrontab(self):
     self.CheckACrontab('test_crontab.disable')
+
+  def testCheckWarnWithWhitelistedUser(self):
+    self.CheckACrontab('test_crontab.whitelist', ['not_a_user'])
 
 
 if __name__ == '__main__':
