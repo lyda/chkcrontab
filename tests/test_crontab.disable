@@ -24,6 +24,11 @@ OK_EMPTY=""
 BAD_SPACE= 
 OK_SPACE=" "
 
+# disable fail 1 for comment in variable assignment.
+NO_COMMENT="something" # comment
+NO_COMMENT=something # comment
+NO_COMMENT="something # comment"
+
 # disable warn 1 for bad time spec.
 * 3 * * * root Warn for hours not minutes
 # disable fail 1 for bad time spec.
@@ -74,7 +79,7 @@ OK_SPACE=" "
 1,4,6,*/5 */3,2,7 * * mOn-Fri root Good Day Range
 1,4,6,*/5 */3,2,7 * * mOn-Fri/2 root Good Day Range Step
 # chkcrontab: enable-msg=FIELD_VALUE_ERROR
-# FAIL 1 for bad time spec.
+# FAIL 3 for bad time spec.
 1,4,6,*/5 */3,2,7 * * mOn/2 root Bad Day Step
 1,4,6,*/5 */3,2,7 * * mOn-Fri/8 root Good Day Range Step
 # disable warn 1 for probable missing user.

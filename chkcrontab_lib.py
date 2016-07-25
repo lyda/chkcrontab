@@ -681,6 +681,11 @@ class CronLineAssignment(object):
                    'Variable assignments in crontabs are not like shell.'
                    '  $VAR is not expanded.')
 
+    if re.match('".+" ?#', self.variable) or re.match('[^"].*#', self.variable):
+      log.LineError(log.MSG_COMMENT,
+                   'Variable assignments in crontabs are not like shell.'
+                   '  # comment is not allowed.')
+
 
 class CronLineTimeAction(object):
   """Checks cron lines that specify a time and an action.
@@ -881,7 +886,8 @@ class LogCounter(object):
                     'QUOTE_VALUES',
                     'SHELL_VAR',
                     'USER_NOT_FOUND',
-                    'HOURS_NOT_MINUTES'))
+                    'HOURS_NOT_MINUTES',
+                    'COMMENT'))
 
   def __init__(self):
     """Inits LogCounter."""
