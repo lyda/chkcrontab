@@ -30,35 +30,18 @@ import sys
 import chkcrontab_lib as check
 
 from optparse import OptionParser
+from argparse import ArgumentParser
 
 def main(argv):
   """main program."""
-  if len(argv) == 1:
-    print('ERROR: No crontab file was specified.')
-    sys.exit(1)
+  parser = ArgumentParser(description="Parse crontab files and check each type of line for potential syntax errors.")
+  parser.add_argument('crontab', help='the crontab file to parse')
+  parser.add_argument('--whitelist','-w', action='append', dest='whitelisted_users', help='A user to ignore when warning of unrecognized users  This argument may be passed multiple times.', default=None)
+  args = parser.parse_args()
 
   log = check.LogCounter()
-  print('Checking correctness of %s' % argv[1])
-  return check.check_crontab(argv[1], log, get_whitelisted_users(argv))
-
-def get_whitelisted_users(argv):
-  """Gets the list of whitelisted users, if any.
-
-  Args:
-    argv: The argument string supplied by the caller.
-
-  Returns:
-    The list of whitelisted users.
-  """
-  parser = OptionParser()
-  parser.add_option('-w', '--whitelist', dest='whitelisted_users', action='append',
-                    help='A user to ignore when warning of unrecognized users  This argument may be passed multiple times.')
-  (options, args) = parser.parse_args(argv)
-
-  if options.whitelisted_users:
-    return options.whitelisted_users
-  else:
-    return None
+  print('Checking correctness of %s' % args.crontab)
+  return check.check_crontab(args.crontab, log, args.whitelisted_users)
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv))
