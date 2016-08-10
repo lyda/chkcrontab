@@ -697,6 +697,7 @@ class CronLineTimeAction(object):
     self.time_field = time_field
     self.user = user
     self.command = command
+    self.check_passwd = check_passwd
 
   def _CheckTimeField(self, log):
     """Virtual method to be implemented by subclasses to check time field."""
@@ -720,7 +721,7 @@ class CronLineTimeAction(object):
       log.LineError(log.MSG_INVALID_USER, 'Invalid username "%s"' % self.user)
     elif re.search(r'[\s!"#$%&\'()*+,/:;<=>?@[\\\]^`{|}~]', self.user):
       log.LineError(log.MSG_INVALID_USER, 'Invalid username "%s"' % self.user)
-    elif check_passwd:
+    elif self.check_passwd:
       try:
         pwd.getpwnam(self.user)
       except KeyError:
