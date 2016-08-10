@@ -42,7 +42,7 @@ def main(argv):
 
   log = check.LogCounter()
   print('Checking correctness of %s' % args.crontab)
-  return check.check_crontab(args.crontab, log, args.whitelisted_users)
+  return check.check_crontab(args, log)
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv))

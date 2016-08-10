@@ -1053,14 +1053,14 @@ class LogCounter(object):
     return self._error_count
 
 
-def check_crontab(crontab_file, log, whitelisted_users=None):
+def check_crontab(arguments, log):
   """Check a crontab file.
 
   Checks crontab_file for a variety of errors or potential errors.  This only
   works with the crontab format found in /etc/crontab and /etc/cron.d.
 
   Args:
-    crontab_file: Name of the crontab file to check.
+    arguments: ArgumentPArser Object containing the crontab file and options
     log: A LogCounter object.
     whitelisted_users: A list of users to ignore when warning on unrecognized users.
 
@@ -1071,18 +1071,18 @@ def check_crontab(crontab_file, log, whitelisted_users=None):
   """
 
   # Check if the file even exists.
-  if not os.path.exists(crontab_file):
+  if not os.path.exists(arguments.crontab):
     return log.Summary()
 
   # Add the any specified users to the whitelist
-  if whitelisted_users:
-    USER_WHITELIST.update(whitelisted_users)
+  if arguments.whitelisted_users:
+    USER_WHITELIST.update(arguments.whitelisted_users)
 
   # Check the file name.
-  if re.search('[^A-Za-z0-9_-]', os.path.basename(crontab_file)):
+  if re.search('[^A-Za-z0-9_-]', os.path.basename(arguments.crontab)):
     in_whitelist = False
     for pattern in FILE_RE_WHITELIST:
-      if pattern.search(os.path.basename(crontab_file)):
+      if pattern.search(os.path.basename(arguments.crontab)):
         in_whitelist = True
         break
     if not in_whitelist:
@@ -1091,7 +1091,7 @@ def check_crontab(crontab_file, log, whitelisted_users=None):
 
   line_no = 0
   cron_line_factory = CronLineFactory()
-  with open(crontab_file, 'r') as crontab_f:
+  with open(arguments.crontab, 'r') as crontab_f:
     for line in crontab_f:
       missing_newline = line[-1] != "\n"
 
