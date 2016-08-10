@@ -693,7 +693,7 @@ class CronLineTimeAction(object):
   Must be used as a subclass - subclass must implement _CheckTimeField.
   """
 
-  def __init__(self, time_field, user, command):
+  def __init__(self, time_field, user, command, check_passwd=True):
     self.time_field = time_field
     self.user = user
     self.command = command
@@ -720,10 +720,13 @@ class CronLineTimeAction(object):
       log.LineError(log.MSG_INVALID_USER, 'Invalid username "%s"' % self.user)
     elif re.search(r'[\s!"#$%&\'()*+,/:;<=>?@[\\\]^`{|}~]', self.user):
       log.LineError(log.MSG_INVALID_USER, 'Invalid username "%s"' % self.user)
-    else:
+    elif check_passwd:
       try:
         pwd.getpwnam(self.user)
       except KeyError:
+        log.LineWarn(log.MSG_USER_NOT_FOUND,
+                     'User "%s" not found.' % self.user)
+    else:
         log.LineWarn(log.MSG_USER_NOT_FOUND,
                      'User "%s" not found.' % self.user)
 
