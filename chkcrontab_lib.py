@@ -695,10 +695,10 @@ class CronLineTimeAction(object):
     self.user = user
     self.command = command
     self.whitelisted_users = []
-    if 'whitelisted_users' in options:
+    if hasattr(options, 'whitelisted_users'):
         self.whitelisted_users = options.whitelisted_users
-    self_check_passwd = True
-    if 'check_passwd' in options:
+    self.check_passwd = True
+    if hasattr(options, 'check_passwd'):
         self.check_passwd = options.check_passwd
 
   def _CheckTimeField(self, log):
