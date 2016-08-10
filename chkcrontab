@@ -36,7 +36,7 @@ def main(argv):
   """main program."""
   parser = ArgumentParser(description="Parse crontab files and check each type of line for potential syntax errors.")
   parser.add_argument('crontab', help='the crontab file to parse')
-  parser.add_argument('--whitelist','-w', action='append', dest='whitelisted_users', help='A user to ignore when warning of unrecognized users  This argument may be passed multiple times.', default=None)
+  parser.add_argument('--whitelist','-w', action='append', dest='whitelisted_users', help='A user to ignore when warning of unrecognized users  This argument may be passed multiple times.', default=['postgres', 'buildbot'])
   parser.add_argument('-n', '--no-check-passwd', action='store_false', dest='check_passwd', help='Disable user lookup')
   args = parser.parse_args()
 

@@ -78,9 +78,6 @@ import re
 import string
 
 
-# The following usernames are created locally by packages.
-USER_WHITELIST = set(('postgres', 'buildbot',
-                     ))
 # The following extensions imply further postprocessing or that the slack
 # role was for a cron that allowed dots in cron scripts.
 FILE_RE_WHITELIST = [re.compile(x) for x in
@@ -693,11 +690,16 @@ class CronLineTimeAction(object):
   Must be used as a subclass - subclass must implement _CheckTimeField.
   """
 
-  def __init__(self, time_field, user, command, check_passwd=True):
+  def __init__(self, time_field, user, command, options):
     self.time_field = time_field
     self.user = user
     self.command = command
-    self.check_passwd = check_passwd
+    self.whitelisted_users = []
+    if 'whitelisted_users' in options:
+        self.whitelisted_users = options.whitelisted_users
+    self_check_passwd = True
+    if 'check_passwd' in options:
+        self.check_passwd = options.check_passwd
 
   def _CheckTimeField(self, log):
     """Virtual method to be implemented by subclasses to check time field."""
@@ -712,7 +714,7 @@ class CronLineTimeAction(object):
     self._CheckTimeField(log)
 
     # User checks.
-    if self.user in USER_WHITELIST:
+    if self.user in self.whitelisted_users:
       return
     elif len(self.user) > 31:
       log.LineError(log.MSG_INVALID_USER,
@@ -807,11 +809,12 @@ class CronLineFactory(object):
   def __init__(self):
     pass
 
-  def ParseLine(self, line):
+  def ParseLine(self, line, options ):
     """Classify a line.
 
     Args:
       line: The line to classify.
+      options: a dictionary with options to pass to the CronLineAction Object
 
     Returns:
       A CronLine* class (must have a ValidateAndLog method).
@@ -842,7 +845,7 @@ class CronLineFactory(object):
     match = at_line_re.match(line)
     if match:
       return CronLineAt(match.groups()[0], match.groups()[1],
-                        match.groups()[2])
+                        match.groups()[2], options)
 
     # Is this line a cron job specifier?
     match = time_field_job_line_re.match(line)
@@ -854,7 +857,7 @@ class CronLineFactory(object):
           'month': match.groups()[3],
           'day of week': match.groups()[4],
           }
-      return CronLineTime(field, match.groups()[5], match.groups()[6])
+      return CronLineTime(field, match.groups()[5], match.groups()[6], options)
 
     return CronLineUnknown()
 
@@ -1075,8 +1078,8 @@ def check_crontab(arguments, log):
     return log.Summary()
 
   # Add the any specified users to the whitelist
-  if arguments.whitelisted_users:
-    USER_WHITELIST.update(arguments.whitelisted_users)
+  #if arguments.whitelisted_users:
+  #  USER_WHITELIST.update(arguments.whitelisted_users)
 
   # Check the file name.
   if re.search('[^A-Za-z0-9_-]', os.path.basename(arguments.crontab)):
@@ -1098,7 +1101,7 @@ def check_crontab(arguments, log):
       line = line.strip()
       line_no += 1
 
-      cron_line = cron_line_factory.ParseLine(line)
+      cron_line = cron_line_factory.ParseLine(line,arguments)
       cron_line.ValidateAndLog(log)
 
       log.Emit(line_no, line)
