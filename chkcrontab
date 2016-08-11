@@ -38,10 +38,12 @@ def main(argv):
   parser.add_argument('crontab', help='the crontab file to parse')
   parser.add_argument('--whitelist','-w', action='append', dest='whitelisted_users', help='A user to ignore when warning of unrecognized users  This argument may be passed multiple times.', default=['postgres', 'buildbot'])
   parser.add_argument('-n', '--no-check-passwd', action='store_false', dest='check_passwd', help='Disable user lookup')
+  parser.add_argument('-q' '--quiet', action='store_true', dest='quiet', help="Be quiet")
   args = parser.parse_args()
 
   log = check.LogCounter()
-  print('Checking correctness of %s' % args.crontab)
+  if not args.quiet:
+    print('Checking correctness of %s' % args.crontab)
   return check.check_crontab(args, log)
 
 if __name__ == '__main__':
