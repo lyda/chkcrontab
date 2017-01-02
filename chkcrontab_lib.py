@@ -1083,6 +1083,8 @@ def check_crontab(crontab_file, log, whitelisted_users=None):
   cron_line_factory = CronLineFactory()
   with open(crontab_file, 'r') as crontab_f:
     for line in crontab_f:
+      missing_newline = line[-1] != "\n"
+
       line = line.strip()
       line_no += 1
 
@@ -1090,6 +1092,10 @@ def check_crontab(crontab_file, log, whitelisted_users=None):
       cron_line.ValidateAndLog(log)
 
       log.Emit(line_no, line)
+
+      # are we missing a trailing newline?
+      if missing_newline:
+        log.Error('Cron will not process this file - missing trailing newline')
 
   # Summarize the log messages if there were any.
   return log.Summary()
