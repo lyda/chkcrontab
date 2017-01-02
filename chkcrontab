@@ -41,7 +41,7 @@ def main(argv):
   (options, args) = parse_chkcrontab_options(argv)
   for crontab in args[1:]:
     print('Checking correctness of %s' % crontab)
-    return check.check_crontab(crontab, log, options['whitelisted_users'])
+    return check.check_crontab(crontab, log, options.whitelisted_users)
 
 def parse_chkcrontab_options(argv):
   """Parse the options for chkcrontab.
