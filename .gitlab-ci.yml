@@ -1,5 +1,7 @@
+# Dear maintainers of the pypy image...
 before_script:
   - test -f /usr/local/bin/pypy && ln -s pypy /usr/local/bin/python
+  - test -f /usr/local/bin/pypy3 && ln -s pypy3 /usr/local/bin/python
   - python setup.py install
 
 test:2.7:
