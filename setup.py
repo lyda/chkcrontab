@@ -25,10 +25,7 @@ from distutils import log
 from distutils.command.install import install
 from distutils.core import setup
 from distutils.core import Command
-if sys.version_info < (2, 7):
-  import unittest2 as unittest
-else:
-  import unittest
+
 
 BASE_DIR = os.path.dirname(globals().get('__file__', os.getcwd()))
 
@@ -44,6 +41,14 @@ class TestCmd(Command):
     pass
 
   def run(self):
+    if sys.version_info < (2, 7):
+        try:
+            import unittest2 as unittest
+        except ImportError:
+            raise RuntimeError('unittest2 required for running tests under Python < 2.7.')
+    else:
+        import unittest
+
     test_dir = os.path.join(BASE_DIR, 'tests')
 
     tests = unittest.TestLoader().discover(test_dir)
@@ -51,6 +56,7 @@ class TestCmd(Command):
     result = runner.run(tests)
     if not result.wasSuccessful():
       sys.exit(1)
+
 
 class CleanCmd(Command):
   description = 'Remove all generated files.'
@@ -153,12 +159,14 @@ class InstallCmd(install):
                             os.path.join(manpage_dir, manpage_file),
                             dry_run=self.dry_run)
 
+
 # Only override install if not being run by setuptools.
 cmdclass = {'test': TestCmd,
             'dist_clean': CleanCmd,
             }
 if 'setuptools' not in dir():
   cmdclass['install'] = InstallCmd
+
 
 setup(
   cmdclass=cmdclass,
