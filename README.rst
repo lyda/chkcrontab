@@ -1,6 +1,14 @@
 ==========
 chkcrontab
 ==========
+.. image:: https://gitlab.ie.suberic.net/kevin/chkcrontab/badges/master/build.svg
+   :target: https://gitlab.ie.suberic.net/kevin/chkcrontab/commits/master
+   :alt: Home build status
+
+.. image:: https://gitlab.ie.suberic.net/kevin/chkcrontab/badges/master/coverage.svg
+   :target: https://gitlab.ie.suberic.net/kevin/chkcrontab/commits/master
+   :alt: Home coverage status
+
 .. image:: https://travis-ci.org/lyda/chkcrontab.png?branch=master
    :target: https://travis-ci.org/lyda/chkcrontab
    :alt: Build status
