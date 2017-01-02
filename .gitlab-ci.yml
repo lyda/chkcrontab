@@ -2,47 +2,66 @@
 before_script:
   - test -f /usr/local/bin/pypy && ln -s pypy /usr/local/bin/python
   - test -f /usr/local/bin/pypy3 && ln -s pypy3 /usr/local/bin/python
-  - python setup.py install
 
 test:2.7:
   image: python:2.7-alpine
   type: test
   script:
+    - pip install pytest-cov
+    - python setup.py install
     - python setup.py test
+    - py.test --cov=chkcrontab_lib tests
 
 test:3.3:
   image: python:3.3-alpine
   type: test
   script:
+    - pip install pytest-cov
+    - python setup.py install
     - python setup.py test
+    - py.test --cov=chkcrontab_lib tests
 
 test:3.4:
   image: python:3.4-alpine
   type: test
   script:
+    - pip install pytest-cov
+    - python setup.py install
     - python setup.py test
+    - py.test --cov=chkcrontab_lib tests
 
 test:3.5:
   image: python:3.5-alpine
   type: test
   script:
+    - pip install pytest-cov
+    - python setup.py install
     - python setup.py test
+    - py.test --cov=chkcrontab_lib tests
 
 test:3.6:
   image: python:3.6-alpine
   type: test
   script:
+    - pip install pytest-cov
+    - python setup.py install
     - python setup.py test
+    - py.test --cov=chkcrontab_lib tests
 
 test:pypy-2:
   image: pypy:2-slim
   type: test
   script:
+    - pip install pytest-cov
+    - python setup.py install
     - python setup.py test
+    - py.test --cov=chkcrontab_lib tests
 
 test:pypy-3:
   image: pypy:3-slim
   type: test
   script:
+    - pip install pytest-cov
+    - python setup.py install
     - python setup.py test
-
+    - py.test --cov=chkcrontab_lib tests
