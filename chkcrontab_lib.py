@@ -707,7 +707,7 @@ class CronLineTimeAction(object):
 
     # User checks.
     if self.user in USER_WHITELIST:
-      return
+      pass
     elif len(self.user) > 31:
       log.LineError(log.MSG_INVALID_USER,
                     'Username too long "%s"' % self.user)
