@@ -38,8 +38,10 @@ def main(argv):
     sys.exit(1)
 
   log = check.LogCounter()
-  print('Checking correctness of %s' % argv[1])
-  return check.check_crontab(argv[1], log, get_whitelisted_users(argv))
+  (options, args) = get_whitelisted_users(argv)
+  for crontab in args[1:]:
+    print('Checking correctness of %s' % crontab)
+    return check.check_crontab(crontab, log, options['whitelisted_users'])
 
 def get_whitelisted_users(argv):
   """Gets the list of whitelisted users, if any.
