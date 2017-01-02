@@ -1,4 +1,5 @@
 before_script:
+  - test -f /usr/local/bin/pypy && ln -s pypy /usr/local/bin/python
   - python setup.py install
 
 test:2.7:
