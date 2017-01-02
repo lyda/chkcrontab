@@ -1062,6 +1062,7 @@ def check_crontab(crontab_file, log, whitelisted_users=None):
 
   # Check if the file even exists.
   if not os.path.exists(crontab_file):
+    log.Warn('File "%s" does not exist.' % crontab_file)
     return log.Summary()
 
   # Add the any specified users to the whitelist
