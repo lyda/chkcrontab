@@ -38,27 +38,25 @@ def main(argv):
     sys.exit(1)
 
   log = check.LogCounter()
-  print('Checking correctness of %s' % argv[1])
-  return check.check_crontab(argv[1], log, get_whitelisted_users(argv))
+  (options, args) = parse_chkcrontab_options(argv)
+  for crontab in args[1:]:
+    print('Checking correctness of %s' % crontab)
+    return check.check_crontab(crontab, log, options.whitelisted_users)
 
-def get_whitelisted_users(argv):
-  """Gets the list of whitelisted users, if any.
+def parse_chkcrontab_options(argv):
+  """Parse the options for chkcrontab.
 
   Args:
     argv: The argument string supplied by the caller.
 
   Returns:
-    The list of whitelisted users.
+    options: A dictionary of options and their values.
+    args: Remaining arguments.
   """
   parser = OptionParser()
   parser.add_option('-w', '--whitelist', dest='whitelisted_users', action='append',
                     help='A user to ignore when warning of unrecognized users  This argument may be passed multiple times.')
-  (options, args) = parser.parse_args(argv)
-
-  if options.whitelisted_users:
-    return options.whitelisted_users
-  else:
-    return None
+  return parser.parse_args(argv)
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv))

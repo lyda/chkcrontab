@@ -712,7 +712,7 @@ class CronLineTimeAction(object):
 
     # User checks.
     if self.user in USER_WHITELIST:
-      return
+      pass
     elif len(self.user) > 31:
       log.LineError(log.MSG_INVALID_USER,
                     'Username too long "%s"' % self.user)
@@ -1068,6 +1068,7 @@ def check_crontab(crontab_file, log, whitelisted_users=None):
 
   # Check if the file even exists.
   if not os.path.exists(crontab_file):
+    log.Warn('File "%s" does not exist.' % crontab_file)
     return log.Summary()
 
   # Add the any specified users to the whitelist
