@@ -31,23 +31,31 @@ import chkcrontab_lib as check
 
 from optparse import OptionParser
 from argparse import ArgumentParser
+try:
+  from _version import __version__
+except ImportError:
+  __version__ = 'unknown'
 
 def main(argv):
   """main program."""
   parser = ArgumentParser(
-      description="Parse crontab files and check each type of line for potential syntax errors.")
+      description='Parse crontab files; check for potential syntax errors.',
+      version=__version__)
   parser.add_argument('crontab', help='the crontab file to parse')
   parser.add_argument('-w', '--whitelist', action='append',
       dest='whitelisted_users',
-      help='A user to ignore when warning of unrecognized users  This argument may be passed multiple times.',
+      help='user to ignore when warning of unrecognized users; may be passed multiple times',
       default=['postgres', 'buildbot'])
   parser.add_argument('-n', '--no-check-passwd', action='store_false',
-      dest='check_passwd', help='Disable user lookup')
+      dest='check_passwd', help='disable user lookup')
   parser.add_argument('-q', '--quiet', action='store_true',
-      dest='quiet', help="Be quiet")
+      dest='quiet', help='be quiet')
   args = parser.parse_args()
 
   log = check.LogCounter()
+  if args.version:
+    print('Version %s\n' % __version__)
+    return 0
   if not args.quiet:
     print('Checking correctness of %s' % args.crontab)
   return check.check_crontab(args, log)

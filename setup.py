@@ -26,9 +26,9 @@ from distutils.command.install import install
 from distutils.core import setup
 from distutils.core import Command
 
-
 BASE_DIR = os.path.dirname(globals().get('__file__', os.getcwd()))
-
+VERSION = os.popen2('git describe --dirty="*" --always')[1].readline().strip()
+open('_version.py', 'w').write('__version__ = "%s"\n' % VERSION)
 
 class TestCmd(Command):
   description = 'Runs all available tests.'
@@ -171,13 +171,13 @@ if 'setuptools' not in dir():
 setup(
   cmdclass=cmdclass,
   name='chkcrontab',
-  version='1.7',
+  version=VERSION,
   url='http://code.google.com/p/chkcrontab',
   author='Kevin Lyda',
   author_email='lyda@google.com',
   description='A tool to detect crontab errors',
   long_description=open('README.rst').read(),
-  py_modules=['chkcrontab_lib'],
+  py_modules=['chkcrontab_lib', '.version'],
   scripts=['chkcrontab'],
   keywords='check lint crontab',
   # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
