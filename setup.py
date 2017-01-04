@@ -19,6 +19,7 @@ This installs the chkcrontab command and the crontab.check module.
 """
 
 import os
+import subprocess
 import sys
 from distutils import file_util
 from distutils import log
@@ -27,7 +28,8 @@ from distutils.core import setup
 from distutils.core import Command
 
 BASE_DIR = os.path.dirname(globals().get('__file__', os.getcwd()))
-VERSION = os.popen2('git describe --dirty="*" --always')[1].readline().strip()
+VERSION = subprocess.check_output(
+    ['git', 'describe', '--dirty=*', '--always']).strip()
 open('_version.py', 'w').write('__version__ = "%s"\n' % VERSION)
 
 class TestCmd(Command):
