@@ -29,7 +29,7 @@ from distutils.core import Command
 
 BASE_DIR = os.path.dirname(globals().get('__file__', os.getcwd()))
 VERSION = subprocess.check_output(
-    ['git', 'describe', '--dirty=*', '--always']).strip()
+    ['git', 'describe', '--dirty=*', '--always']).strip().decode('utf8')
 open('_version.py', 'w').write('__version__ = "%s"\n' % VERSION)
 
 class TestCmd(Command):
