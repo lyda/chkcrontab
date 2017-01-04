@@ -41,7 +41,7 @@ def main(argv):
   parser = ArgumentParser(
       description='Parse crontab files; check for potential syntax errors.',
       version=__version__)
-  parser.add_argument('crontab', help='the crontab file to parse')
+  parser.add_argument('crontab', help='crontab file to parse')
   parser.add_argument('-w', '--whitelist', action='append',
       dest='whitelisted_users',
       help='user to ignore when warning of unrecognized users; may be passed multiple times',
