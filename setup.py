@@ -177,7 +177,7 @@ setup(
   author_email='lyda@google.com',
   description='A tool to detect crontab errors',
   long_description=open('README.rst').read(),
-  py_modules=['chkcrontab_lib', '.version'],
+  py_modules=['chkcrontab_lib', '_version'],
   scripts=['chkcrontab'],
   keywords='check lint crontab',
   # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
