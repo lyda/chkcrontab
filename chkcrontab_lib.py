@@ -1059,11 +1059,12 @@ class LogCounter(object):
 def check_crontab(arguments, log):
   """Check a crontab file.
 
-  Checks crontab_file for a variety of errors or potential errors.  This only
-  works with the crontab format found in /etc/crontab and /etc/cron.d.
+  Checks arguments.crontab for a variety of errors or potential errors.
+  This only works with the crontab format found in /etc/crontab and
+  /etc/cron.d.
 
   Args:
-    arguments: ArgumentPArser Object containing the crontab file and options
+    arguments: ArgumentParser object containing the crontab file and options.
     log: A LogCounter object.
 
   Returns:
@@ -1074,7 +1075,7 @@ def check_crontab(arguments, log):
 
   # Check if the file even exists.
   if not os.path.exists(arguments.crontab):
-    log.Warn('File "%s" does not exist.' % crontab_file)
+    log.Warn('File "%s" does not exist.' % arguments.crontab)
     return log.Summary()
 
   # Add the any specified users to the whitelist
