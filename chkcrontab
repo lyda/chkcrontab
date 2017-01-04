@@ -52,13 +52,9 @@ def main(argv):
       dest='quiet', help='be quiet')
   args = parser.parse_args()
 
-  log = check.LogCounter()
-  if args.version:
-    print('Version %s\n' % __version__)
-    return 0
   if not args.quiet:
     print('Checking correctness of %s' % args.crontab)
-  return check.check_crontab(args, log)
+  return check.check_crontab(args, check.LogCounter(args.quiet))
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv))
