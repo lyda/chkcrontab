@@ -60,14 +60,22 @@ as ``chkcrontab``. The project page is on `pypi`_:
 
 The source code is available in the following locations:
 
-* Bitbucket: https://bitbucket.org/lyda/chkcrontab/
-* code.google: https://code.google.com/p/chkcrontab/
+* Gitlab: https://gitlab.com/lyda/chkcrontab
 * Github: https://github.com/lyda/chkcrontab
-* Gitorious: https://gitorious.org/uu/chkcrontab
+* Bitbucket: https://bitbucket.org/lyda/chkcrontab/
 * Sourceforge: https://sourceforge.net/p/chkcrontab
 
 Pull requests on any of those platforms or emailed patches are fine.
-Opening issues on github is easiest, but I'll check any of them.
+Opening issues on gitlab or github is easiest, but I'll check any
+of them.
+
+Packaging
+=========
+
+For rpm distributions, ``./setup.py bdist --formats=rpm`` should make an
+rpm but currently dies due to not finding the chkcrontab.1 man page.
+
+For Debian distributions there's an additional tool that might work.
 
 TODO
 ====
@@ -76,8 +84,11 @@ TODO
 * Check for backticks. (why?)
 * Make sure MAILTO and PATH are set (perhaps others?).
 * Add tests for command line.
-* Enable it to parse user crontabs: https://code.google.com/p/chkcrontab/issues/detail?id=2
-* Make "acceptable filenames" a configurable thing: https://github.com/lyda/chkcrontab/issues/4
+* Enable it to parse user crontabs: 
+  https://github.com/lyda/chkcrontab/issues/12
+* Make "acceptable filenames" a configurable thing:
+  https://github.com/lyda/chkcrontab/issues/4
+* Packaging: https://github.com/lyda/chkcrontab/issues/13
 
 Credits
 =======
