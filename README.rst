@@ -77,6 +77,12 @@ rpm but currently dies due to not finding the chkcrontab.1 man page.
 
 For Debian distributions there's an additional tool that might work.
 
+Dockerfile
+==========
+
+To use it with docker, just run
+``docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp numerea/chkcrontab:1.7 chkcrontab ./path/to/crontab``
+
 TODO
 ====
 * Look for duplicate entries. Puppet sometimes loads up crontabs
