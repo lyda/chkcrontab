@@ -349,6 +349,10 @@ class CheckCrontabUnitTest(unittest.TestCase):
     args.check_passwd = False
     self.CheckACrontab(args)
 
+  def testCheckWrongPermissions(self):
+    args = type("", (), {})()
+    args.crontab = os.path.join(BASE_PATH, 'test_crontab.permissions')
+    self.CheckACrontab(args)
 
 if __name__ == '__main__':
   result = unittest.main()

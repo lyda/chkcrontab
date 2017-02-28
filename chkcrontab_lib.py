@@ -76,6 +76,7 @@ import os
 import pwd
 import re
 import string
+import stat
 
 
 # The following extensions imply further postprocessing or that the slack
@@ -1098,6 +1099,12 @@ def check_crontab(arguments, log):
     if not in_whitelist:
       log.Warn('Cron will not process this file - its name must match'
                ' [A-Za-z0-9_-]+ .')
+
+  # check file permissions should not have g+w
+  st=os.stat(arguments.crontab)
+  if bool(st.st_mode & stat.S_IWGRP):
+    log.Error('Cron will not process this file - it has group write '
+              'permission. Use "chmod g-w %s"' % arguments.crontab)
 
   line_no = 0
   cron_line_factory = CronLineFactory()
