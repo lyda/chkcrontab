@@ -1,0 +1,7 @@
+An incomplete list of changes.
+
+TBD: Incorporate changes from @spahan.  Adds ability to turn off
+     user checks (-n).  Adds versioning (-v).  Adds ability to quiet
+     output (-q).
+
+1.7: Initial ability to whitelist users.

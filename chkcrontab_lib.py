@@ -78,9 +78,6 @@ import re
 import string
 
 
-# The following usernames are created locally by packages.
-USER_WHITELIST = set(('postgres', 'buildbot',
-                     ))
 # The following extensions imply further postprocessing or that the slack
 # role was for a cron that allowed dots in cron scripts.
 FILE_RE_WHITELIST = [re.compile(x) for x in
@@ -693,10 +690,16 @@ class CronLineTimeAction(object):
   Must be used as a subclass - subclass must implement _CheckTimeField.
   """
 
-  def __init__(self, time_field, user, command):
+  def __init__(self, time_field, user, command, options):
     self.time_field = time_field
     self.user = user
     self.command = command
+    self.whitelisted_users = []
+    if hasattr(options, 'whitelisted_users'):
+        self.whitelisted_users = options.whitelisted_users
+    self.check_passwd = True
+    if hasattr(options, 'check_passwd'):
+        self.check_passwd = options.check_passwd
 
   def _CheckTimeField(self, log):
     """Virtual method to be implemented by subclasses to check time field."""
@@ -711,7 +714,7 @@ class CronLineTimeAction(object):
     self._CheckTimeField(log)
 
     # User checks.
-    if self.user in USER_WHITELIST:
+    if self.user in self.whitelisted_users:
       pass
     elif len(self.user) > 31:
       log.LineError(log.MSG_INVALID_USER,
@@ -720,10 +723,13 @@ class CronLineTimeAction(object):
       log.LineError(log.MSG_INVALID_USER, 'Invalid username "%s"' % self.user)
     elif re.search(r'[\s!"#$%&\'()*+,/:;<=>?@[\\\]^`{|}~]', self.user):
       log.LineError(log.MSG_INVALID_USER, 'Invalid username "%s"' % self.user)
-    else:
+    elif self.check_passwd:
       try:
         pwd.getpwnam(self.user)
       except KeyError:
+        log.LineWarn(log.MSG_USER_NOT_FOUND,
+                     'User "%s" not found.' % self.user)
+    else:
         log.LineWarn(log.MSG_USER_NOT_FOUND,
                      'User "%s" not found.' % self.user)
 
@@ -803,11 +809,12 @@ class CronLineFactory(object):
   def __init__(self):
     pass
 
-  def ParseLine(self, line):
+  def ParseLine(self, line, options ):
     """Classify a line.
 
     Args:
       line: The line to classify.
+      options: a dictionary with options to pass to the CronLineAction Object
 
     Returns:
       A CronLine* class (must have a ValidateAndLog method).
@@ -838,7 +845,7 @@ class CronLineFactory(object):
     match = at_line_re.match(line)
     if match:
       return CronLineAt(match.groups()[0], match.groups()[1],
-                        match.groups()[2])
+                        match.groups()[2], options)
 
     # Is this line a cron job specifier?
     match = time_field_job_line_re.match(line)
@@ -850,7 +857,7 @@ class CronLineFactory(object):
           'month': match.groups()[3],
           'day of week': match.groups()[4],
           }
-      return CronLineTime(field, match.groups()[5], match.groups()[6])
+      return CronLineTime(field, match.groups()[5], match.groups()[6], options)
 
     return CronLineUnknown()
 
@@ -889,13 +896,14 @@ class LogCounter(object):
                     'HOURS_NOT_MINUTES',
                     'COMMENT'))
 
-  def __init__(self):
+  def __init__(self, quiet=False):
     """Inits LogCounter."""
     self._error_count = 0
     self._warn_count = 0
     self._ignored = set()
     self._line_errors = []
     self._line_warns = []
+    self._quiet = quiet
 
   def Ignore(self, msg_kind):
     """Start ignoring a category of message.
@@ -950,7 +958,8 @@ class LogCounter(object):
     Args:
       message: The message to print as a warning.
     """
-    print('W:', message)
+    if not self._quiet:
+      print('W:', message)
     self._warn_count += 1
 
   def LineWarn(self, msg_kind, line_warn):
@@ -974,7 +983,8 @@ class LogCounter(object):
     Args:
       message: The message to print as a error.
     """
-    print('E:', message)
+    if not self._quiet:
+      print('E:', message)
     self._error_count += 1
 
   def LineError(self, msg_kind, line_error):
@@ -1004,14 +1014,15 @@ class LogCounter(object):
       spacer = ' ' * len('%d' % line_no)
       line_error_fmt = 'e: %s  %%s' % spacer
       line_warn_fmt = 'w: %s  %%s' % spacer
-      if self._line_errors:
-        print('E: %d: %s' % (line_no, line))
-      else:
-        print('W: %d: %s' % (line_no, line))
-      for line_error in self._line_errors:
-        print(line_error_fmt % line_error)
-      for line_warn in self._line_warns:
-        print(line_warn_fmt % line_warn)
+      if not self._quiet:
+        if self._line_errors:
+          print('E: %d: %s' % (line_no, line))
+        else:
+          print('W: %d: %s' % (line_no, line))
+        for line_error in self._line_errors:
+          print(line_error_fmt % line_error)
+        for line_warn in self._line_warns:
+          print(line_warn_fmt % line_warn)
       self._line_errors = []
       self._line_warns = []
 
@@ -1027,13 +1038,15 @@ class LogCounter(object):
     """
     more_info = 'See http://goo.gl/7XS9q for more info.'
     if self._error_count > 0:
-      print('E: There were %d errors and %d warnings.'
-            % (self._error_count, self._warn_count))
-      print(more_info)
+      if not self._quiet:
+        print('E: There were %d errors and %d warnings.'
+              % (self._error_count, self._warn_count))
+        print(more_info)
       return 2
     elif self._warn_count > 0:
-      print('W: There were %d warnings.' % self._warn_count)
-      print(more_info)
+      if not self._quiet:
+        print('W: There were %d warnings.' % self._warn_count)
+        print(more_info)
       return 1
     else:
       return 0
@@ -1049,16 +1062,16 @@ class LogCounter(object):
     return self._error_count
 
 
-def check_crontab(crontab_file, log, whitelisted_users=None):
+def check_crontab(arguments, log):
   """Check a crontab file.
 
-  Checks crontab_file for a variety of errors or potential errors.  This only
-  works with the crontab format found in /etc/crontab and /etc/cron.d.
+  Checks arguments.crontab for a variety of errors or potential errors.
+  This only works with the crontab format found in /etc/crontab and
+  /etc/cron.d.
 
   Args:
-    crontab_file: Name of the crontab file to check.
+    arguments: ArgumentParser object containing the crontab file and options.
     log: A LogCounter object.
-    whitelisted_users: A comma delimited list of users to ignore when warning on unrecognized users.
 
   Returns:
     0 if there were no errors.
@@ -1067,19 +1080,19 @@ def check_crontab(crontab_file, log, whitelisted_users=None):
   """
 
   # Check if the file even exists.
-  if not os.path.exists(crontab_file):
-    log.Warn('File "%s" does not exist.' % crontab_file)
+  if not os.path.exists(arguments.crontab):
+    log.Warn('File "%s" does not exist.' % arguments.crontab)
     return log.Summary()
 
   # Add the any specified users to the whitelist
-  if whitelisted_users:
-    USER_WHITELIST.update(whitelisted_users)
+  #if arguments.whitelisted_users:
+  #  USER_WHITELIST.update(arguments.whitelisted_users)
 
   # Check the file name.
-  if re.search('[^A-Za-z0-9_-]', os.path.basename(crontab_file)):
+  if re.search('[^A-Za-z0-9_-]', os.path.basename(arguments.crontab)):
     in_whitelist = False
     for pattern in FILE_RE_WHITELIST:
-      if pattern.search(os.path.basename(crontab_file)):
+      if pattern.search(os.path.basename(arguments.crontab)):
         in_whitelist = True
         break
     if not in_whitelist:
@@ -1088,14 +1101,14 @@ def check_crontab(crontab_file, log, whitelisted_users=None):
 
   line_no = 0
   cron_line_factory = CronLineFactory()
-  with open(crontab_file, 'r') as crontab_f:
+  with open(arguments.crontab, 'r') as crontab_f:
     for line in crontab_f:
       missing_newline = line[-1] != "\n"
 
       line = line.strip()
       line_no += 1
 
-      cron_line = cron_line_factory.ParseLine(line)
+      cron_line = cron_line_factory.ParseLine(line,arguments)
       cron_line.ValidateAndLog(log)
 
       log.Emit(line_no, line)

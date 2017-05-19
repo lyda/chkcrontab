@@ -19,6 +19,7 @@ This installs the chkcrontab command and the crontab.check module.
 """
 
 import os
+import subprocess
 import sys
 from distutils import file_util
 from distutils import log
@@ -26,9 +27,10 @@ from distutils.command.install import install
 from distutils.core import setup
 from distutils.core import Command
 
-
 BASE_DIR = os.path.dirname(globals().get('__file__', os.getcwd()))
-
+VERSION = subprocess.check_output(
+    ['git', 'describe', '--dirty', '--always']).strip().decode('utf8')
+open('_version.py', 'w').write('__version__ = "%s"\n' % VERSION)
 
 class TestCmd(Command):
   description = 'Runs all available tests.'
@@ -41,13 +43,8 @@ class TestCmd(Command):
     pass
 
   def run(self):
-    if sys.version_info < (2, 7):
-        try:
-            import unittest2 as unittest
-        except ImportError:
-            raise RuntimeError('unittest2 required for running tests under Python < 2.7.')
-    else:
-        import unittest
+    # Testing only works on python 2.7 and up.
+    import unittest
 
     test_dir = os.path.join(BASE_DIR, 'tests')
 
@@ -171,13 +168,13 @@ if 'setuptools' not in dir():
 setup(
   cmdclass=cmdclass,
   name='chkcrontab',
-  version='1.7',
-  url='http://code.google.com/p/chkcrontab',
+  version=VERSION,
+  url='https://gitlab.com/lyda/chkcrontab',
   author='Kevin Lyda',
-  author_email='lyda@google.com',
+  author_email='kevin@phrye.com',
   description='A tool to detect crontab errors',
   long_description=open('README.rst').read(),
-  py_modules=['chkcrontab_lib'],
+  py_modules=['chkcrontab_lib', '_version'],
   scripts=['chkcrontab'],
   keywords='check lint crontab',
   # See http://pypi.python.org/pypi?%3Aaction=list_classifiers

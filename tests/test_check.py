@@ -307,11 +307,10 @@ class CheckCrontabUnitTest(unittest.TestCase):
       exp_rc = 0
     return (exp_warn, exp_fail, exp_rc)
 
-  def CheckACrontab(self, crontab, whitelisted_users=None):
+  def CheckACrontab(self, arguments):
     log = check.LogCounter()
-    crontab_file = os.path.join(BASE_PATH, crontab)
-    (exp_warn, exp_fail, exp_rc) = self.GetExpWFRs(crontab_file)
-    self.assertEquals(check.check_crontab(crontab_file, log, whitelisted_users), exp_rc,
+    (exp_warn, exp_fail, exp_rc) = self.GetExpWFRs(arguments.crontab)
+    self.assertEquals(check.check_crontab(arguments, log), exp_rc,
                       'Failed to return %d for crontab errors.' % exp_rc)
     self.assertEquals(log.warn_count, exp_warn,
                       'Found %d warns not %d.' % (log.warn_count, exp_warn))
@@ -319,19 +318,36 @@ class CheckCrontabUnitTest(unittest.TestCase):
                       'Found %d errors not %d.' % (log.error_count, exp_fail))
 
   def testCheckBadCrontab(self):
-    self.CheckACrontab('test_crontab')
+    args = type("", (), {})()
+    args.crontab = os.path.join(BASE_PATH, 'test_crontab')
+    self.CheckACrontab(args)
 
   def testCheckWarnCrontab(self):
-    self.CheckACrontab('test_crontab.warn')
+    args = type("", (), {})()
+    args.crontab = os.path.join(BASE_PATH, 'test_crontab.warn')
+    self.CheckACrontab(args)
 
   def testCheckWarnWithDisablesCrontab(self):
-    self.CheckACrontab('test_crontab.no-warn')
+    args = type("", (), {})()
+    args.crontab = os.path.join(BASE_PATH, 'test_crontab.no-warn')
+    self.CheckACrontab(args)
 
   def testCheckBadWithDisablesCrontab(self):
-    self.CheckACrontab('test_crontab.disable')
+    args = type("", (), {})()
+    args.crontab = os.path.join(BASE_PATH, 'test_crontab.disable')
+    self.CheckACrontab(args)
 
   def testCheckWarnWithWhitelistedUser(self):
-    self.CheckACrontab('test_crontab.whitelist', ['not_a_user'])
+    args = type("", (), {})()
+    args.crontab = os.path.join(BASE_PATH, 'test_crontab.whitelist')
+    args.whitelisted_users = ['not_a_user']
+    self.CheckACrontab(args)
+
+  def testCheckBadWithUserLookup(self):
+    args = type("", (), {})()
+    args.crontab = os.path.join(BASE_PATH, 'test_crontab.lookup')
+    args.check_passwd = False
+    self.CheckACrontab(args)
 
 
 if __name__ == '__main__':
