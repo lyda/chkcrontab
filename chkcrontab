@@ -46,6 +46,8 @@ def main(argv):
       dest='whitelisted_users',
       help='user to ignore when warning of unrecognized users; may be passed multiple times',
       default=['postgres', 'buildbot'])
+  parser.add_argument('-u', '--user', action='store_true',
+      dest='user', help='crontab user')
   parser.add_argument('-n', '--no-check-passwd', action='store_false',
       dest='check_passwd', help='disable user lookup')
   parser.add_argument('-q', '--quiet', action='store_true',

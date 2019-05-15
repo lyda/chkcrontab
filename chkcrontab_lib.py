@@ -716,6 +716,8 @@ class CronLineTimeAction(object):
     # User checks.
     if self.user in self.whitelisted_users:
       pass
+    elif self.user is False:
+      pass
     elif len(self.user) > 31:
       log.LineError(log.MSG_INVALID_USER,
                     'Username too long "%s"' % self.user)
@@ -806,7 +808,8 @@ class CronLineUnknown(object):
 class CronLineFactory(object):
   """Classify a line in a cron field by what type of line it is."""
 
-  def __init__(self):
+  def __init__(self, is_user_crontab=False):
+    self.is_user_crontab = is_user_crontab
     pass
 
   def ParseLine(self, line, options ):
@@ -857,7 +860,10 @@ class CronLineFactory(object):
           'month': match.groups()[3],
           'day of week': match.groups()[4],
           }
-      return CronLineTime(field, match.groups()[5], match.groups()[6], options)
+      if self.is_user_crontab:
+          return CronLineTime(field, False, match.groups()[5] + " " + match.groups()[6], options)
+      else:
+          return CronLineTime(field, match.groups()[5], match.groups()[6], options)
 
     return CronLineUnknown()
 
@@ -1100,7 +1106,7 @@ def check_crontab(arguments, log):
                ' [A-Za-z0-9_-]+ .')
 
   line_no = 0
-  cron_line_factory = CronLineFactory()
+  cron_line_factory = CronLineFactory(arguments.user)
   with open(arguments.crontab, 'r') as crontab_f:
     for line in crontab_f:
       missing_newline = line[-1] != "\n"
