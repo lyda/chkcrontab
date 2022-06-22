@@ -83,6 +83,9 @@ import string
 FILE_RE_WHITELIST = [re.compile(x) for x in
                      (r'\.in$', r'\.cron$', r'\.disabled$', r'^(\S+\.)?cron\.d$')]
 
+# Per https://manpages.debian.org/jessie/cron/crontab.5.en.html:
+# "The maximum permitted length for the command field is 998 characters."
+MAX_COMMAND_LENGTH = 998
 
 class FSM(object):
   """Finite State Machine.
@@ -738,6 +741,9 @@ class CronLineTimeAction(object):
       log.LineWarn(log.MSG_BARE_PERCENT, 'A bare % is a line break in'
                    ' crontab and is commonly not intended.')
 
+    if len(self.command) > MAX_COMMAND_LENGTH:
+      log.LineError(log.MSG_COMMAND_LENGTH_ERROR, 'Command length is %d which is greater'
+                    ' than %d (max allowed characters)' % (len(self.command), MAX_COMMAND_LENGTH))
 
 class CronLineAt(CronLineTimeAction):
   """For cron lines specified with @ time specs."""
@@ -885,6 +891,7 @@ class LogCounter(object):
 
   _msg_kinds = set(('BARE_PERCENT',
                     'CHKCRONTAB_ERROR',
+                    'COMMAND_LENGTH_ERROR',
                     'FIELD_PARSE_ERROR',
                     'FIELD_VALUE_ERROR',
                     'INVALID_AT',
