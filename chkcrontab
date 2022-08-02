@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # Copyright 2011 Google Inc. All Rights Reserved.
 #
@@ -31,16 +31,12 @@ import chkcrontab_lib as check
 
 from optparse import OptionParser
 from argparse import ArgumentParser
-try:
-  from _version import __version__
-except ImportError:
-  __version__ = 'unknown'
 
 def main(argv):
   """main program."""
   parser = ArgumentParser(
       description='Parse crontab files; check for potential syntax errors.',
-      version=__version__)
+      )
   parser.add_argument('crontab', help='crontab file to parse')
   parser.add_argument('-w', '--whitelist', action='append',
       dest='whitelisted_users',
