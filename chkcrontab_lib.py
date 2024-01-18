@@ -822,12 +822,12 @@ class CronLineFactory(object):
     Returns:
       A CronLine* class (must have a ValidateAndLog method).
     """
-    chkcrontab_cmd = re.compile('##*\s*chkcrontab:\s*(.*)=(.*)')
-    assignment_line_re = re.compile('[a-zA-Z_][a-zA-Z0-9_]*\s*=(.*)')
-    at_line_re = re.compile('@(\S+)\s+(\S+)\s+(.*)')
-    cron_time_field_re = '[\*0-9a-zA-Z,/-]+'
+    chkcrontab_cmd = re.compile(r'##*\s*chkcrontab:\s*(.*)=(.*)')
+    assignment_line_re = re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*\s*=(.*)')
+    at_line_re = re.compile(r'@(\S+)\s+(\S+)\s+(.*)')
+    cron_time_field_re = r'[\*0-9a-zA-Z,/-]+'
     time_field_job_line_re = re.compile(
-        '^\s*(%s)\s+(%s)\s+(%s)\s+(%s)\s+(%s)\s+(\S+)\s+(.*)' %
+        r'^\s*(%s)\s+(%s)\s+(%s)\s+(%s)\s+(%s)\s+(\S+)\s+(.*)' %
         (cron_time_field_re, cron_time_field_re, cron_time_field_re,
          cron_time_field_re, cron_time_field_re))
 
