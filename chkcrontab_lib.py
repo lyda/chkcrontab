@@ -826,10 +826,16 @@ class CronLineFactory(object):
     assignment_line_re = re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*\s*=(.*)')
     at_line_re = re.compile(r'@(\S+)\s+(\S+)\s+(.*)')
     cron_time_field_re = r'[\*0-9a-zA-Z,/-]+'
-    time_field_job_line_re = re.compile(
-        r'^\s*(%s)\s+(%s)\s+(%s)\s+(%s)\s+(%s)\s+(\S+)\s+(.*)' %
-        (cron_time_field_re, cron_time_field_re, cron_time_field_re,
-         cron_time_field_re, cron_time_field_re))
+    if self.is_user_crontab:
+        time_field_job_line_re = re.compile(
+            r'^\s*(%s)\s+(%s)\s+(%s)\s+(%s)\s+(%s)\s+(.*)' %
+            (cron_time_field_re, cron_time_field_re, cron_time_field_re,
+             cron_time_field_re, cron_time_field_re))
+    else:
+        time_field_job_line_re = re.compile(
+            r'^\s*(%s)\s+(%s)\s+(%s)\s+(%s)\s+(%s)\s+(\S+)\s+(.*)' %
+            (cron_time_field_re, cron_time_field_re, cron_time_field_re,
+             cron_time_field_re, cron_time_field_re))
 
     if not line:
       return CronLineEmpty()
@@ -861,7 +867,7 @@ class CronLineFactory(object):
           'day of week': match.groups()[4],
           }
       if self.is_user_crontab:
-          return CronLineTime(field, False, match.groups()[5] + " " + match.groups()[6], options)
+          return CronLineTime(field, False, match.groups()[5], options)
       else:
           return CronLineTime(field, match.groups()[5], match.groups()[6], options)
 
