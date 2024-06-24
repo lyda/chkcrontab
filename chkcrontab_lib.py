@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # Copyright 2011 Google Inc. All Rights Reserved.
 #
@@ -716,6 +716,8 @@ class CronLineTimeAction(object):
     # User checks.
     if self.user in self.whitelisted_users:
       pass
+    elif self.user is False:
+      pass
     elif len(self.user) > 31:
       log.LineError(log.MSG_INVALID_USER,
                     'Username too long "%s"' % self.user)
@@ -806,7 +808,8 @@ class CronLineUnknown(object):
 class CronLineFactory(object):
   """Classify a line in a cron field by what type of line it is."""
 
-  def __init__(self):
+  def __init__(self, is_user_crontab=False):
+    self.is_user_crontab = is_user_crontab
     pass
 
   def ParseLine(self, line, options ):
@@ -819,14 +822,20 @@ class CronLineFactory(object):
     Returns:
       A CronLine* class (must have a ValidateAndLog method).
     """
-    chkcrontab_cmd = re.compile('##*\s*chkcrontab:\s*(.*)=(.*)')
-    assignment_line_re = re.compile('[a-zA-Z_][a-zA-Z0-9_]*\s*=(.*)')
-    at_line_re = re.compile('@(\S+)\s+(\S+)\s+(.*)')
-    cron_time_field_re = '[\*0-9a-zA-Z,/-]+'
-    time_field_job_line_re = re.compile(
-        '^\s*(%s)\s+(%s)\s+(%s)\s+(%s)\s+(%s)\s+(\S+)\s+(.*)' %
-        (cron_time_field_re, cron_time_field_re, cron_time_field_re,
-         cron_time_field_re, cron_time_field_re))
+    chkcrontab_cmd = re.compile(r'##*\s*chkcrontab:\s*(.*)=(.*)')
+    assignment_line_re = re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*\s*=(.*)')
+    at_line_re = re.compile(r'@(\S+)\s+(\S+)\s+(.*)')
+    cron_time_field_re = r'[\*0-9a-zA-Z,/-]+'
+    if self.is_user_crontab:
+        time_field_job_line_re = re.compile(
+            r'^\s*(%s)\s+(%s)\s+(%s)\s+(%s)\s+(%s)\s+(.*)' %
+            (cron_time_field_re, cron_time_field_re, cron_time_field_re,
+             cron_time_field_re, cron_time_field_re))
+    else:
+        time_field_job_line_re = re.compile(
+            r'^\s*(%s)\s+(%s)\s+(%s)\s+(%s)\s+(%s)\s+(\S+)\s+(.*)' %
+            (cron_time_field_re, cron_time_field_re, cron_time_field_re,
+             cron_time_field_re, cron_time_field_re))
 
     if not line:
       return CronLineEmpty()
@@ -857,7 +866,10 @@ class CronLineFactory(object):
           'month': match.groups()[3],
           'day of week': match.groups()[4],
           }
-      return CronLineTime(field, match.groups()[5], match.groups()[6], options)
+      if self.is_user_crontab:
+          return CronLineTime(field, False, match.groups()[5], options)
+      else:
+          return CronLineTime(field, match.groups()[5], match.groups()[6], options)
 
     return CronLineUnknown()
 
@@ -1100,7 +1112,7 @@ def check_crontab(arguments, log):
                ' [A-Za-z0-9_-]+ .')
 
   line_no = 0
-  cron_line_factory = CronLineFactory()
+  cron_line_factory = CronLineFactory(arguments.user)
   with open(arguments.crontab, 'r') as crontab_f:
     for line in crontab_f:
       missing_newline = line[-1] != "\n"
